@@ -115,6 +115,12 @@ const PROYECTOS = [
     link: "https://origen-cafe-eta.vercel.app",
     tags: ["JavaScript", "E-commerce", "Admin"],
   },
+  {
+    name: "Ébano · Alta Sastrería",
+    desc: "Sitio para una casa de sastrería de alta gama: trajes a medida, alta costura y calzado artesanal. Agenda de citas y consultas por WhatsApp o correo, muestrario de telas en CSS puro y doble tema.",
+    link: "https://ebano-sastreria.vercel.app",
+    tags: ["HTML", "CSS", "JS vanilla", "UI/UX"],
+  },
 ];
 
 /* --- CONTACTO --- */
