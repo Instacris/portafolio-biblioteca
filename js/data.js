@@ -62,6 +62,12 @@ const EXPERIENCIA = [
 /* --- PROYECTOS (nombre, descripción, link real y tags) --- */
 const PROYECTOS = [
   {
+    name: "Brasa Burger · Hamburguesería",
+    desc: "Sitio para una hamburguesería artesanal: portada con hamburguesas animadas que rotan, carta digital ilustrada (burgers, malteadas, cafés), reserva de mesa y pedidos a domicilio por WhatsApp.",
+    link: "https://brasa-burger-alpha.vercel.app",
+    tags: ["HTML", "CSS", "JavaScript", "SVG", "Animaciones"],
+  },
+  {
     name: "Overdrive · Tienda de Cosplay",
     desc: "Tienda temática con dos perfiles: vista de cliente (catálogo con ofertas y stock en tiempo real, pedidos por WhatsApp) y panel administrativo completo. Base de datos real en la nube.",
     link: "https://overdrive-woad.vercel.app/demo",
