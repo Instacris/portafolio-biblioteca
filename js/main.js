@@ -5,6 +5,9 @@
 (function () {
   "use strict";
 
+  /* Con JS presente se habilitan los estados ocultos de .reveal (sin JS, todo visible) */
+  document.documentElement.classList.add("js");
+
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
 

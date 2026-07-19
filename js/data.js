@@ -46,14 +46,14 @@ const EXPERIENCIA = [
   {
     role: "Operario R/F",
     company: "Natura",
-    date: "2023 — 2025",
+    date: "2023-2025",
     desc: "Búsqueda por sistema y en bodega de cajas y productos para pickeadores, con movimientos por sistema y carga por radiofrecuencia según la instalación solicitada.",
     tags: ["Radiofrecuencia", "Excel", "SAP"],
   },
   {
     role: "Ayudante de Soldador",
     company: "Rompeltiem (BOCH)",
-    date: "2022 — 2023",
+    date: "2022-2023",
     desc: "Fabricación, mantención y pruebas de calderas: apoyo en soldadura, manejo de herramientas, movilización y transporte.",
     tags: ["Aprendizaje", "Trabajo en equipo"],
   },
