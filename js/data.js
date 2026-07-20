@@ -69,8 +69,8 @@ const PROYECTOS = [
   },
   {
     name: "Overdrive · Tienda de Cosplay",
-    desc: "Tienda temática con dos perfiles: vista de cliente (catálogo con ofertas y stock en tiempo real, pedidos por WhatsApp) y panel administrativo completo. Base de datos real en la nube.",
-    link: "https://overdrive-woad.vercel.app/demo",
+    desc: "Tienda temática con dos perfiles: vista de cliente (catálogo con ofertas y stock en tiempo real, pedidos por WhatsApp) y panel administrativo completo. Base de datos real en la nube. Proyecto en producción, en uso por el cliente.",
+    link: "https://overdrive-woad.vercel.app",
     tags: ["JavaScript", "API Serverless", "Redis", "Admin"],
   },
   {
