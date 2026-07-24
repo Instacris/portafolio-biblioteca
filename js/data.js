@@ -129,6 +129,69 @@ const PROYECTOS = [
   },
 ];
 
+/* --- FRASES DE LA PORTADA (efecto máquina de escribir) --- */
+const FRASES = [
+  "Desarrollador web",
+  "Analista informático",
+  "Sistemas a medida",
+  "Lector de fantasía",
+];
+
+/* --- PASATIEMPOS --- */
+const PASATIEMPOS = [
+  {
+    icon: "libro",
+    title: "Libros y fantasía",
+    desc: "Mundos con reglas propias, mapas al principio y un buen final. De ahí saco la manía de que todo tenga estructura.",
+  },
+  {
+    icon: "mando",
+    title: "Videojuegos",
+    desc: "Mi primera escuela de diseño: menús, ritmo, recompensa y esa sensación de que la interfaz responde bien.",
+  },
+  {
+    icon: "familia",
+    title: "Tiempo en familia",
+    desc: "Desconectar del teclado con mi hermano chico. Las mejores ideas siempre llegan lejos del computador.",
+  },
+];
+
+/* --- FOTOS QUE VIAJAN POR LA PÁGINA ---
+   Para que aparezcan, guarda tus 3 fotos en la carpeta img/
+   con EXACTAMENTE estos nombres de archivo. --- */
+const FOTOS = [
+  { key: "hermano",    file: "img/hermano.jpg",    alt: "Cristóbal junto a su hermano menor", caption: "Lám. I: Fuera del teclado" },
+  { key: "traje",      file: "img/traje.jpg",      alt: "Cristóbal de traje",                 caption: "Lám. II: El profesional" },
+  { key: "escritorio", file: "img/escritorio.jpg", alt: "Cristóbal programando en su escritorio", caption: "Lám. III: En el taller" },
+];
+
+/* Qué foto se muestra en cada sección al hacer scroll */
+const RIEL_SECCIONES = {
+  portada: "portada",
+  perfil: "mazo",
+  conocimientos: "mazo",
+  pasatiempos: "pasatiempos",
+  experiencia: "experiencia",
+  proyectos: "proyectos",
+  servicios: "mazo",
+  contacto: "mazo",
+};
+
+/* --- STACK PARA LA CINTA INFINITA (LogoLoop) --- */
+const STACK = [
+  { name: "JavaScript", icon: "js" },
+  { name: "HTML5",      icon: "html" },
+  { name: "CSS3",       icon: "css" },
+  { name: "Python",     icon: "python" },
+  { name: "Java",       icon: "java" },
+  { name: "SQL",        icon: "sql" },
+  { name: "React",      icon: "react" },
+  { name: "Node.js",    icon: "node" },
+  { name: "Git",        icon: "git" },
+  { name: "Vercel",     icon: "vercel" },
+  { name: "Excel",      icon: "excel" },
+];
+
 /* --- CONTACTO --- */
 const CONTACTO = {
   email: "cristobal.chacon2003@gmail.com",
@@ -144,3 +207,8 @@ window.EXCEL_SKILLS = EXCEL_SKILLS;
 window.EXPERIENCIA = EXPERIENCIA;
 window.PROYECTOS = PROYECTOS;
 window.CONTACTO = CONTACTO;
+window.FRASES = FRASES;
+window.PASATIEMPOS = PASATIEMPOS;
+window.FOTOS = FOTOS;
+window.RIEL_SECCIONES = RIEL_SECCIONES;
+window.STACK = STACK;

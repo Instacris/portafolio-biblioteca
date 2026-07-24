@@ -39,21 +39,7 @@
     try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
   });
 
-  /* ---------- Menú móvil ---------- */
-  var menuBtn = $("#menu-btn");
-  var nav = $("#nav");
-
-  menuBtn.addEventListener("click", function () {
-    var open = nav.classList.toggle("open");
-    menuBtn.setAttribute("aria-expanded", String(open));
-  });
-
-  nav.addEventListener("click", function (e) {
-    if (e.target.tagName === "A") {
-      nav.classList.remove("open");
-      menuBtn.setAttribute("aria-expanded", "false");
-    }
-  });
+  /* El menú (BubbleMenu) se gestiona en js/effects.js */
 
   /* ---------- Números romanos para el catálogo ---------- */
   function roman(n) {
@@ -118,7 +104,8 @@
   var worksGrid = $("#works-grid");
   window.PROYECTOS.forEach(function (p, i) {
     var a = document.createElement("a");
-    a.className = "work reveal";
+    /* cursor-target: la mira del cursor se ancla a esta tarjeta */
+    a.className = "work reveal cursor-target";
     a.href = p.link;
     a.target = "_blank";
     a.rel = "noopener";
@@ -127,20 +114,20 @@
         '<span class="work-numeral">Obra ' + roman(i + 1) + "</span>" +
         '<span class="work-arrow">↗</span>' +
       "</div>" +
-      '<h3 class="work-title">' + esc(p.name) + "</h3>" +
+      '<h3 class="work-title"><span class="shiny-text">' + esc(p.name) + "</span></h3>" +
       '<p class="work-desc">' + esc(p.desc) + "</p>" +
       '<p class="work-tags">' + p.tags.map(esc).join(" · ") + "</p>";
     worksGrid.appendChild(a);
   });
 
   /* ---------- Contacto ---------- */
+  /* El resto de las redes se arma en el dock (js/effects.js) */
   var C = window.CONTACTO;
-  $("#c-mail").href = "mailto:" + C.email;
-  $("#c-mail").textContent = C.email;
-  $("#c-mail2").href = "mailto:" + C.email;
-  $("#c-gh").href = C.github;
-  $("#c-li").href = C.linkedin;
-  $("#c-wa").href = "https://wa.me/" + C.whatsapp;
+  var mail = $("#c-mail");
+  if (mail) {
+    mail.href = "mailto:" + C.email;
+    mail.textContent = C.email;
+  }
 
   /* ---------- Año ---------- */
   $("#year").textContent = new Date().getFullYear();
@@ -195,7 +182,7 @@
 
   /* ---------- Enlace activo en la navegación ---------- */
   var sections = $$("main section[id]");
-  var navLinks = $$(".nav a");
+  var navLinks = $$(".pill-link");
 
   function linkFor(id) {
     return navLinks.filter(function (a) {

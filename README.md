@@ -12,13 +12,46 @@ portafolio; la primera (cyberpunk / pixel art) queda enlazada como
   La preferencia se guarda en `localStorage`.
 
 ## Estructura de la página (una sola página)
-1. **Portada** — nombre, epigrama, retrato («Lám. I») y cifras.
+1. **Portada** — nombre, frase que se escribe sola, botones y cinta de tecnologías.
 2. **Capítulo I · Perfil** — presentación con letra capital y ficha de autor.
 3. **Capítulo II · Conocimientos** — lenguajes (medidores), herramientas y Excel.
-4. **Capítulo III · Experiencia** — línea de tiempo laboral.
-5. **Capítulo IV · Proyectos** — catálogo de obras con numeración romana y enlaces en vivo.
-6. **Apéndices** — KAMEX Tech (servicios) y la edición arcade (portafolio anterior).
-7. **Epílogo · Contacto** — email, GitHub y LinkedIn.
+4. **Capítulo III · Pasatiempos** — fondo oscuro con el ojo de fuego animado.
+5. **Capítulo IV · Experiencia** — línea de tiempo laboral.
+6. **Capítulo V · Proyectos** — catálogo de obras con numeración romana y enlaces en vivo.
+7. **Apéndices** — KAMEX Tech y la edición arcade, sobre lluvia de letras.
+8. **Epílogo · Contacto** — email y dock de redes.
+
+## Efectos (JavaScript puro, sin React ni librerías)
+Los componentes vienen de React Bits / shadcn, pero este sitio **no usa build**,
+así que están reimplementados a mano respetando su comportamiento y sus props:
+
+| Efecto | Dónde | Archivo |
+|---|---|---|
+| **TextType** (máquina de escribir) | Solo la portada | `js/effects.js` |
+| **ShinyText** (brillo que recorre) | Títulos de obras y botones | `js/effects.js` + `css/effects.css` |
+| **LogoLoop** (cinta infinita) | Bajo el texto de la portada | `js/effects.js` |
+| **BubbleMenu** (menú de burbujas) | Navegación, PC y teléfono | `js/effects.js` |
+| **TargetCursor** (mira) | Solo la sección Proyectos | `js/effects.js` |
+| **EvilEye** (ojo de fuego, WebGL) | Fondo de Pasatiempos | `js/backgrounds.js` |
+| **LetterGlitch** (lluvia de letras) | Fondo de Servicios | `js/backgrounds.js` |
+| **Riel de fotos** | Viaja por la derecha al hacer scroll | `js/effects.js` |
+| **Dock de redes** | Epílogo, se abre al pasar el cursor | `js/effects.js` |
+
+Todos respetan «reducir movimiento» del sistema y los fondos animados se
+**pausan** cuando su sección no está a la vista.
+
+## Las 3 fotos que viajan con el scroll
+Guarda tus fotos en `img/` con **exactamente** estos nombres:
+
+| Archivo | Foto | Aparece grande en |
+|---|---|---|
+| `img/hermano.jpg` | Con tu hermano | Pasatiempos |
+| `img/traje.jpg` | Con traje | Experiencia |
+| `img/escritorio.jpg` | Programando | Proyectos |
+
+Mientras falten, en su lugar se ve un recuadro que indica el nombre que
+debe tener el archivo. El viaje de las fotos es de **escritorio (≥1200px)**;
+en teléfono y tablet se muestran como collage en la portada.
 
 ## Cómo editar tu información
 Casi todo el contenido vive en **`js/data.js`**:
