@@ -451,6 +451,9 @@
 
       estadoActual = estado;
       riel.setAttribute("data-state", estado);
+      /* El body comparte el estado: así el CSS sabe cuándo mostrar
+         la credencial colgante y cuándo el riel de fotos. */
+      document.body.setAttribute("data-seccion", estado);
       caption.textContent = textoCaption(estado);
       caption.style.opacity = textoCaption(estado) ? "1" : "0";
     }
@@ -525,9 +528,328 @@
   }
 
   /* ==========================================================
+     9 · Monograma K — reemplaza a los antiguos separadores
+     ========================================================== */
+  var K_SVG =
+    '<svg viewBox="0 0 40 40" fill="none" aria-hidden="true">' +
+      '<path d="M20 2.6 37.4 20 20 37.4 2.6 20 20 2.6Z" stroke="currentColor" stroke-width=".9" opacity=".42"/>' +
+      '<path d="M15 12v16M15 20.2 23 12M15 20.2 23.6 28" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>' +
+    "</svg>";
+
+  function monogramas() {
+    /* Separadores entre capítulos */
+    $$(".fleuron").forEach(function (f) {
+      f.innerHTML = '<span class="k-mark">' + K_SVG + "</span>";
+    });
+    /* Burbuja del logo y cualquier otro punto marcado */
+    $$("[data-k]").forEach(function (el) { el.innerHTML = K_SVG; });
+  }
+
+  /* ==========================================================
+     10 · SplitText — el nombre entra letra por letra
+     ========================================================== */
+  function splitText(el, opts) {
+    if (!el) return;
+
+    var o = opts || {};
+    var delay = o.delay != null ? o.delay : 45;
+    var texto = el.textContent.trim();
+
+    el.textContent = "";
+    el.classList.add("split-parent");
+    /* El texto completo queda accesible para lectores de pantalla */
+    el.setAttribute("aria-label", texto);
+
+    var n = 0;
+    texto.split(" ").forEach(function (palabra, wi, todas) {
+      var w = document.createElement("span");
+      w.className = "split-word";
+      w.setAttribute("aria-hidden", "true");
+
+      palabra.split("").forEach(function (ch) {
+        var c = document.createElement("span");
+        c.className = "split-char";
+        c.textContent = ch;
+        c.style.transitionDelay = (n * delay) + "ms";
+        n += 1;
+        w.appendChild(c);
+      });
+
+      el.appendChild(w);
+      if (wi < todas.length - 1) {
+        el.appendChild(document.createTextNode(" "));
+        n += 1;
+      }
+    });
+
+    if (reduceMotion) { el.classList.add("is-in"); return; }
+    setTimeout(function () { el.classList.add("is-in"); }, o.initialDelay || 180);
+  }
+
+  /* ==========================================================
+     11 · Lanyard — credencial que cuelga y se balancea
+     Cuerda con física verlet; reacciona al scroll y se arrastra.
+     ========================================================== */
+  function lanyard() {
+    var root = $("#lanyard");
+    if (!root) return;
+
+    var ANCHO = 240;
+    var ALTO = 470;
+    var N = 8;                 /* puntos de la cuerda */
+    var SEG = 17;              /* largo de cada tramo */
+    var CARD_W = 148;
+    var CARD_H = 206;
+
+    root.innerHTML =
+      '<svg class="lanyard-band" viewBox="0 0 ' + ANCHO + " " + ALTO + '" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path class="lanyard-band-path" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+      "</svg>" +
+      '<div class="lanyard-card" id="lanyard-card">' +
+        '<span class="lanyard-hole"></span>' +
+        '<div class="lanyard-photo">' +
+          '<img src="img/fotoperfil.jpg" alt="Cristóbal Chacón" draggable="false" />' +
+        "</div>" +
+        '<p class="lanyard-name">Cristóbal Chacón</p>' +
+        '<p class="lanyard-role">Desarrollador web</p>' +
+        '<span class="lanyard-k" data-k></span>' +
+      "</div>";
+
+    var path = $(".lanyard-band-path", root);
+    var card = $("#lanyard-card", root);
+    $$("[data-k]", root).forEach(function (el) { el.innerHTML = K_SVG; });
+
+    var anchorX = ANCHO / 2;
+    var anchorY = 6;
+
+    var pts = [];
+    for (var i = 0; i < N; i++) {
+      pts.push({ x: anchorX, y: anchorY + i * SEG, ox: anchorX, oy: anchorY + i * SEG });
+    }
+
+    var arrastrando = false;
+    var dragX = 0, dragY = 0;
+    var impulso = 0;
+
+    function fisica() {
+      var gravedad = 0.85;
+      var roce = 0.985;
+
+      for (var i = 1; i < N; i++) {
+        var p = pts[i];
+        var vx = (p.x - p.ox) * roce;
+        var vy = (p.y - p.oy) * roce;
+        p.ox = p.x;
+        p.oy = p.y;
+        p.x += vx;
+        p.y += vy + gravedad;
+      }
+
+      /* Resolución de restricciones: mantiene los tramos a su largo */
+      for (var k = 0; k < 14; k++) {
+        pts[0].x = anchorX;
+        pts[0].y = anchorY;
+
+        for (var j = 0; j < N - 1; j++) {
+          var a = pts[j], b = pts[j + 1];
+          var dx = b.x - a.x, dy = b.y - a.y;
+          var d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+          var ajuste = ((d - SEG) / d) * 0.5;
+          var ox = dx * ajuste, oy = dy * ajuste;
+          if (j > 0) { a.x += ox; a.y += oy; }
+          b.x -= ox; b.y -= oy;
+        }
+
+        if (arrastrando) {
+          pts[N - 1].x = dragX;
+          pts[N - 1].y = dragY;
+        }
+
+        /* No dejamos que la cuerda se salga del contenedor */
+        for (var m = 1; m < N; m++) {
+          if (pts[m].x < 22) pts[m].x = 22;
+          if (pts[m].x > ANCHO - 22) pts[m].x = ANCHO - 22;
+        }
+      }
+    }
+
+    function pintar() {
+      var d = "M" + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+      for (var i = 1; i < N; i++) {
+        d += " L" + pts[i].x.toFixed(1) + " " + pts[i].y.toFixed(1);
+      }
+      path.setAttribute("d", d);
+
+      var fin = pts[N - 1];
+      var prev = pts[N - 2];
+      var ang = Math.atan2(fin.x - prev.x, fin.y - prev.y) * (180 / Math.PI);
+
+      card.style.transform =
+        "translate(" + (fin.x - CARD_W / 2).toFixed(1) + "px," + fin.y.toFixed(1) + "px)" +
+        " rotate(" + (-ang).toFixed(2) + "deg)";
+    }
+
+    /* --- Arrastre con el ratón / el dedo --- */
+    function puntoLocal(e) {
+      var r = root.getBoundingClientRect();
+      var escalaX = ANCHO / r.width;
+      var escalaY = ALTO / r.height;
+      return {
+        x: (e.clientX - r.left) * escalaX,
+        y: (e.clientY - r.top) * escalaY
+      };
+    }
+
+    card.addEventListener("pointerdown", function (e) {
+      arrastrando = true;
+      var p = puntoLocal(e);
+      dragX = p.x; dragY = p.y;
+      card.setPointerCapture(e.pointerId);
+      root.classList.add("is-dragging");
+    });
+
+    card.addEventListener("pointermove", function (e) {
+      if (!arrastrando) return;
+      var p = puntoLocal(e);
+      dragX = p.x; dragY = p.y;
+    });
+
+    function soltar(e) {
+      if (!arrastrando) return;
+      arrastrando = false;
+      root.classList.remove("is-dragging");
+      try { card.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+
+    card.addEventListener("pointerup", soltar);
+    card.addEventListener("pointercancel", soltar);
+
+    /* --- La credencial se mece al desplazar la página --- */
+    var ultimoScroll = window.scrollY;
+    window.addEventListener("scroll", function () {
+      var delta = window.scrollY - ultimoScroll;
+      ultimoScroll = window.scrollY;
+      impulso += delta;
+    }, { passive: true });
+
+    if (reduceMotion) {
+      for (var s = 0; s < 240; s++) fisica();
+      pintar();
+      return;
+    }
+
+    var raf = null;
+
+    function bucle() {
+      if (Math.abs(impulso) > 0.01) {
+        /* La inercia empuja la cuerda en sentido contrario al scroll */
+        var golpe = Math.max(-14, Math.min(14, impulso * 0.35));
+        for (var i = 1; i < N; i++) {
+          pts[i].oy += golpe * (i / N);
+          pts[i].ox += golpe * 0.16 * (i / N);
+        }
+        impulso = 0;
+      }
+
+      fisica();
+      pintar();
+      raf = requestAnimationFrame(bucle);
+    }
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            if (raf === null) raf = requestAnimationFrame(bucle);
+          } else if (raf !== null) {
+            cancelAnimationFrame(raf); raf = null;
+          }
+        });
+      }, { threshold: 0.01 }).observe(root);
+    } else {
+      raf = requestAnimationFrame(bucle);
+    }
+
+    /* Primer dibujo aunque el bucle aún no arranque */
+    for (var s2 = 0; s2 < 60; s2++) fisica();
+    pintar();
+  }
+
+  /* ==========================================================
+     12 · Ficha emergente de cada obra
+     ========================================================== */
+  function obraModal() {
+    var modal = $("#obra-modal");
+    if (!modal || !window.PROYECTOS) return;
+
+    var img = $("#obra-img", modal);
+    var num = $("#obra-num", modal);
+    var titulo = $("#obra-titulo", modal);
+    var desc = $("#obra-desc", modal);
+    var tags = $("#obra-tags", modal);
+    var link = $("#obra-link", modal);
+    var cerrarBtn = $(".modal-close", modal);
+    var ultimoFoco = null;
+
+    function abrir(i) {
+      var p = window.PROYECTOS[i];
+      if (!p) return;
+
+      ultimoFoco = document.activeElement;
+
+      var tarjeta = $('[data-obra="' + i + '"]');
+      var numeral = tarjeta ? $(".work-numeral", tarjeta) : null;
+
+      num.textContent = numeral ? numeral.textContent : "";
+      titulo.textContent = p.name;
+      desc.textContent = p.desc;
+      tags.textContent = p.tags.join(" · ");
+      link.href = p.link;
+
+      if (p.img) {
+        img.src = p.img;
+        img.alt = "Vista previa de " + p.name;
+        img.parentElement.style.display = "";
+      } else {
+        img.removeAttribute("src");
+        img.parentElement.style.display = "none";
+      }
+
+      modal.classList.add("is-visible");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      setTimeout(function () {
+        modal.classList.add("is-open");
+        cerrarBtn.focus();
+      }, 20);
+    }
+
+    function cerrar() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      setTimeout(function () { modal.classList.remove("is-visible"); }, 300);
+      if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
+    }
+
+    document.addEventListener("click", function (e) {
+      var tarjeta = e.target.closest ? e.target.closest("[data-obra]") : null;
+      if (tarjeta) { abrir(Number(tarjeta.getAttribute("data-obra"))); return; }
+      if (e.target.closest && e.target.closest("[data-cerrar]")) cerrar();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) cerrar();
+    });
+  }
+
+  /* ==========================================================
      Arranque
      ========================================================== */
   function init() {
+    monogramas();
+
+    splitText($("#hero-name"), { delay: 42, initialDelay: 200 });
     textType($("#typed"), {
       text: window.FRASES,
       typingSpeed: 78,
@@ -542,12 +864,20 @@
 
     pasatiempos();
     photoRail();
+    lanyard();
+    obraModal();
     dock();
     bubbleMenu();
     targetCursor({ zona: "#proyectos", targetSelector: ".cursor-target", spinDuration: 2 });
 
     /* Brillo en los botones de la portada y de los apéndices */
     $$("[data-shiny]").forEach(aplicarShiny);
+
+    /* Las transiciones se activan cuando la página ya está montada,
+       para evitar destellos en el primer pintado. */
+    setTimeout(function () {
+      document.body.classList.add("efectos-listos");
+    }, 120);
   }
 
   if (document.readyState === "loading") {

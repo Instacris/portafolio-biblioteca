@@ -30,8 +30,9 @@
 
   var saved = null;
   try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
-  var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  applyTheme(saved || (prefersDark ? "dark" : "light"));
+  /* Modo claro por defecto: solo se usa el oscuro si el usuario
+     lo eligió antes (no se sigue la preferencia del sistema). */
+  applyTheme(saved === "dark" ? "dark" : "light");
 
   $("#theme-toggle").addEventListener("click", function () {
     var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -101,23 +102,29 @@
   });
 
   /* ---------- Render: proyectos ---------- */
+  /* Cada obra es solo una imagen (en blanco y negro hasta que pasas
+     el cursor). Al hacer clic se abre su ficha completa. */
   var worksGrid = $("#works-grid");
   window.PROYECTOS.forEach(function (p, i) {
-    var a = document.createElement("a");
-    /* cursor-target: la mira del cursor se ancla a esta tarjeta */
-    a.className = "work reveal cursor-target";
-    a.href = p.link;
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.innerHTML =
-      '<div class="work-top">' +
+    var b = document.createElement("button");
+    /* cursor-target: la mira del cursor se ancla a esta obra */
+    b.className = "work reveal cursor-target";
+    b.type = "button";
+    b.setAttribute("data-obra", String(i));
+    b.setAttribute("aria-label", "Ver la ficha de " + p.name);
+    b.innerHTML =
+      '<img class="work-img" src="' + esc(p.img || "") + '" alt="Vista previa de ' + esc(p.name) + '" loading="lazy" />' +
+      '<span class="work-overlay">' +
         '<span class="work-numeral">Obra ' + roman(i + 1) + "</span>" +
-        '<span class="work-arrow">↗</span>' +
-      "</div>" +
-      '<h3 class="work-title"><span class="shiny-text">' + esc(p.name) + "</span></h3>" +
-      '<p class="work-desc">' + esc(p.desc) + "</p>" +
-      '<p class="work-tags">' + p.tags.map(esc).join(" · ") + "</p>";
-    worksGrid.appendChild(a);
+        '<span class="work-name">' + esc(p.name) + "</span>" +
+        '<span class="work-cta"><span class="shiny-text">Clickea para visualizar</span></span>' +
+      "</span>";
+
+    /* Si falta la captura, se muestra el nombre sobre un fondo liso */
+    var img = b.querySelector(".work-img");
+    img.onerror = function () { b.classList.add("sin-imagen"); };
+
+    worksGrid.appendChild(b);
   });
 
   /* ---------- Contacto ---------- */

@@ -436,6 +436,499 @@
   }
 
   /* ==========================================================
+     Utilidades comunes para los fondos con shader
+     ========================================================== */
+  function temaOscuro() {
+    return document.documentElement.getAttribute("data-theme") === "dark";
+  }
+
+  function alCambiarTema(cb) {
+    if (!window.MutationObserver) return;
+    new MutationObserver(function () { cb(temaOscuro()); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+
+  /* Crea un lienzo WebGL a pantalla completa con un shader dado.
+     Devuelve { gl, uniform, canvas } o null si no hay WebGL. */
+  function crearShader(container, vert, frag, opciones) {
+    if (!container) return null;
+
+    var o = opciones || {};
+    var canvas = document.createElement("canvas");
+    var gl = canvas.getContext("webgl", { alpha: true, antialias: false, depth: false, premultipliedAlpha: false }) ||
+             canvas.getContext("experimental-webgl", { alpha: true, antialias: false, depth: false });
+    if (!gl) return null;
+
+    var vs = compilar(gl, gl.VERTEX_SHADER, vert);
+    var fs = compilar(gl, gl.FRAGMENT_SHADER, frag);
+    if (!vs || !fs) return null;
+
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    gl.useProgram(prog);
+
+    container.appendChild(canvas);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
+
+    var posBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var aPos = gl.getAttribLocation(prog, "position");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    var aUv = gl.getAttribLocation(prog, "uv");
+    if (aUv >= 0) {
+      var uvBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 2, 0, 0, 2]), gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(aUv);
+      gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    var cache = {};
+    function loc(n) {
+      if (!(n in cache)) cache[n] = gl.getUniformLocation(prog, n);
+      return cache[n];
+    }
+
+    var api = {
+      gl: gl,
+      canvas: canvas,
+      f: function (n, v) { gl.uniform1f(loc(n), v); return api; },
+      i: function (n, v) { gl.uniform1i(loc(n), v); return api; },
+      v2: function (n, a, b) { gl.uniform2f(loc(n), a, b); return api; },
+      v3: function (n, a) { gl.uniform3fv(loc(n), a); return api; },
+      v3f: function (n, a, b, c) { gl.uniform3f(loc(n), a, b, c); return api; },
+      ancho: 0,
+      alto: 0
+    };
+
+    var dpr = Math.min(window.devicePixelRatio || 1, o.dpr || 1.5);
+
+    function resize() {
+      var w = Math.max(1, Math.round(container.offsetWidth * dpr));
+      var h = Math.max(1, Math.round(container.offsetHeight * dpr));
+      if (canvas.width === w && canvas.height === h) return;
+      canvas.width = w;
+      canvas.height = h;
+      api.ancho = w;
+      api.alto = h;
+      gl.viewport(0, 0, w, h);
+      if (o.onResize) o.onResize(api, w, h);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    function dibujar(t) {
+      resize();
+      if (o.onFrame) o.onFrame(api, t);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    if (reduceMotion) { dibujar(0); return api; }
+
+    var raf = null;
+    function loop(t) { dibujar(t); raf = requestAnimationFrame(loop); }
+
+    alEstarVisible(container,
+      function () { if (raf === null) raf = requestAnimationFrame(loop); },
+      function () { if (raf !== null) { cancelAnimationFrame(raf); raf = null; } }
+    );
+
+    return api;
+  }
+
+  /* ==========================================================
+     Ferrofluid — fondo de la portada
+     El fondo queda transparente para conservar el color del papel;
+     solo se dibujan los filamentos brillantes.
+     ========================================================== */
+  var FLUID_VERT = [
+    "attribute vec2 position;",
+    "attribute vec2 uv;",
+    "varying vec2 vUv;",
+    "void main() { vUv = uv; gl_Position = vec4(position, 0.0, 1.0); }"
+  ].join("\n");
+
+  var FLUID_FRAG = [
+    "precision highp float;",
+    "uniform vec3 iResolution;",
+    "uniform vec2 iMouse;",
+    "uniform float iTime;",
+    "uniform vec3 uColor0; uniform vec3 uColor1; uniform vec3 uColor2;",
+    "uniform vec2 uFlow;",
+    "uniform float uSpeed; uniform float uScale; uniform float uTurbulence;",
+    "uniform float uFluidity; uniform float uRimWidth; uniform float uSharpness;",
+    "uniform float uShimmer; uniform float uGlow; uniform float uOpacity;",
+    "uniform float uMouseEnabled; uniform float uMouseStrength; uniform float uMouseRadius;",
+    "varying vec2 vUv;",
+    "#define PI 3.14159265",
+    "vec3 palette(float h) {",
+    "  if (h < 0.3333) return uColor0;",
+    "  if (h < 0.6666) return uColor1;",
+    "  return uColor2;",
+    "}",
+    "float hash(vec3 p3) {",
+    "  p3 = fract(p3 * 0.1031);",
+    "  p3 += dot(p3, p3.zyx + 33.33);",
+    "  return fract((p3.x + p3.y) * p3.z);",
+    "}",
+    "float smin(float a, float b, float k) {",
+    "  float r = exp2(-a / k) + exp2(-b / k);",
+    "  return -k * log2(r);",
+    "}",
+    "float sinlerp(float a, float b, float w) {",
+    "  return mix(a, b, (sin(w * PI - PI / 2.0) + 1.0) / 2.0);",
+    "}",
+    "float vn(vec2 p, float s, float seed) {",
+    "  vec2 cellp = floor(p / s);",
+    "  vec2 relp = mod(p, s);",
+    "  float g1 = hash(vec3(cellp, seed));",
+    "  float g2 = hash(vec3(cellp.x + 1.0, cellp.y, seed));",
+    "  float g3 = hash(vec3(cellp.x + 1.0, cellp.y + 1.0, seed));",
+    "  float g4 = hash(vec3(cellp.x, cellp.y + 1.0, seed));",
+    "  float bx = sinlerp(g1, g2, relp.x / s);",
+    "  float tx = sinlerp(g4, g3, relp.x / s);",
+    "  return sinlerp(bx, tx, relp.y / s);",
+    "}",
+    "float dbn(vec2 p, float s, float seed) {",
+    "  float o = s / 2.0;",
+    "  float n0 = vn(p, s, seed);",
+    "  float n1 = vn(p + vec2(o, o), s, seed + 0.1);",
+    "  float n2 = vn(p + vec2(-o, o), s, seed + 0.2);",
+    "  float n3 = vn(p + vec2(o, -o), s, seed + 0.3);",
+    "  float n4 = vn(p + vec2(-o, -o), s, seed + 0.4);",
+    "  return (2.0 * n0 + 1.5 * n1 + 1.25 * n2 + 1.125 * n3 + n4) / 7.0;",
+    "}",
+    "void main() {",
+    "  vec2 fragCoord = vUv * iResolution.xy;",
+    "  float ref = 700.0 / max(uScale, 0.05);",
+    "  vec2 p = fragCoord / iResolution.y * ref;",
+    "  float spd = 200.0 * uSpeed;",
+    "  float t = iTime;",
+    "  vec2 dir = uFlow;",
+    "  vec2 perp = vec2(-dir.y, dir.x);",
+    "  float distort1 = vn(p + perp * (t * spd), 60.0, 10.0) * 50.0 * uTurbulence;",
+    "  float distort2 = vn(p - perp * (t * spd), 120.0, 15.0) * 100.0 * uTurbulence;",
+    "  float peaks = dbn(p + distort1 + dir * (t * spd * 0.5), 40.0, 1.0);",
+    "  float peaks2 = dbn(p + distort2 - dir * (t * spd * 0.5), 40.0, 0.0);",
+    "  float mapeaks = smin(peaks, peaks2, max(uFluidity, 0.001));",
+    "  float mGlow = 0.0;",
+    "  if (uMouseEnabled > 0.5) {",
+    "    vec2 mp = iMouse / iResolution.y * ref;",
+    "    float md = length(p - mp) / ref;",
+    "    float rr = max(uMouseRadius, 0.02);",
+    "    mGlow = exp(-md * md / (rr * rr)) * uMouseStrength;",
+    "  }",
+    "  float band = (uRimWidth - abs((mapeaks - 0.4) * 2.0)) * 5.0;",
+    "  float ltn = clamp(band - vn(p + dir * (t * spd * 0.5), 60.0, 12.0) * uShimmer, 0.0, 1.0);",
+    "  ltn = pow(ltn, uSharpness) * uGlow;",
+    "  ltn *= clamp(1.0 - mGlow, 0.0, 1.0);",
+    "  float h = clamp(0.5 + (peaks - peaks2) * 0.8, 0.0, 1.0);",
+    "  vec3 col = palette(h);",
+    "  vec3 outc = col * ltn;",
+    "  float a = clamp(max(outc.r, max(outc.g, outc.b)), 0.0, 1.0);",
+    "  gl_FragColor = vec4(outc, a * uOpacity);",
+    "}"
+  ].join("\n");
+
+  function ferrofluid(container) {
+    if (!container) return;
+
+    /* En modo oscuro los filamentos van en blanco (como el original);
+       sobre papel claro el blanco sería invisible, así que se usa el
+       dorado de la página. */
+    function paleta() {
+      return temaOscuro()
+        ? [[1, 1, 1], [1, 1, 1], [0.92, 0.95, 1]]
+        : [hexToRgb01("#8a6c2c"), hexToRgb01("#b08c3e"), hexToRgb01("#7d3434")];
+    }
+
+    var mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+
+    var api = crearShader(container, FLUID_VERT, FLUID_FRAG, {
+      dpr: 1.25,
+      onResize: function (a, w, h) { a.v3f("iResolution", w, h, 1); },
+      onFrame: function (a, t) {
+        mouse.x += (mouse.tx - mouse.x) * 0.06;
+        mouse.y += (mouse.ty - mouse.y) * 0.06;
+        a.f("iTime", t * 0.001);
+        a.v2("iMouse", mouse.x, mouse.y);
+      }
+    });
+
+    if (!api) return;
+
+    function aplicarColores() {
+      var c = paleta();
+      api.v3("uColor0", c[0]).v3("uColor1", c[1]).v3("uColor2", c[2]);
+      api.f("uOpacity", temaOscuro() ? 0.9 : 0.62);
+    }
+
+    api.v2("uFlow", 0, -1)
+       .f("uSpeed", 0.32)
+       .f("uScale", 1.5)
+       .f("uTurbulence", 1)
+       .f("uFluidity", 0.1)
+       .f("uRimWidth", 0.2)
+       .f("uSharpness", 2.6)
+       .f("uShimmer", 1.4)
+       .f("uGlow", 2)
+       .f("uMouseEnabled", 1)
+       .f("uMouseStrength", 1)
+       .f("uMouseRadius", 0.32);
+
+    aplicarColores();
+    alCambiarTema(aplicarColores);
+
+    container.parentElement.addEventListener("mousemove", function (e) {
+      var r = container.getBoundingClientRect();
+      var dpr = api.ancho / Math.max(1, r.width);
+      mouse.tx = (e.clientX - r.left) * dpr;
+      mouse.ty = (r.height - (e.clientY - r.top)) * dpr;
+    });
+  }
+
+  /* ==========================================================
+     SideRays — fondo de Experiencia laboral
+     ========================================================== */
+  var RAYS_VERT = [
+    "attribute vec2 position;",
+    "void main() { gl_Position = vec4(position, 0.0, 1.0); }"
+  ].join("\n");
+
+  var RAYS_FRAG = [
+    "precision highp float;",
+    "uniform float iTime;",
+    "uniform vec2 iResolution;",
+    "uniform float iSpeed;",
+    "uniform vec3 iRayColor1;",
+    "uniform vec3 iRayColor2;",
+    "uniform float iIntensity;",
+    "uniform float iSpread;",
+    "uniform float iFlipX;",
+    "uniform float iFlipY;",
+    "uniform float iTilt;",
+    "uniform float iSaturation;",
+    "uniform float iBlend;",
+    "uniform float iFalloff;",
+    "uniform float iOpacity;",
+    "float rayStrength(vec2 raySource, vec2 rayRefDirection, vec2 coord, float seedA, float seedB, float speed) {",
+    "  vec2 sourceToCoord = coord - raySource;",
+    "  float cosAngle = dot(normalize(sourceToCoord), rayRefDirection);",
+    "  return clamp(",
+    "    (0.45 + 0.15 * sin(cosAngle * seedA + iTime * speed)) +",
+    "    (0.3 + 0.2 * cos(-cosAngle * seedB + iTime * speed)),",
+    "    0.0, 1.0) *",
+    "    clamp((iResolution.x - length(sourceToCoord)) / iResolution.x, 0.5, 1.0);",
+    "}",
+    "void main() {",
+    "  vec2 fragCoord = gl_FragCoord.xy;",
+    "  if (iFlipX > 0.5) fragCoord.x = iResolution.x - fragCoord.x;",
+    "  if (iFlipY > 0.5) fragCoord.y = iResolution.y - fragCoord.y;",
+    "  vec2 coord = vec2(fragCoord.x, iResolution.y - fragCoord.y);",
+    "  vec2 rayPos = vec2(iResolution.x * 1.1, -0.5 * iResolution.y);",
+    "  float tiltRad = iTilt * 3.14159265 / 180.0;",
+    "  float cs = cos(tiltRad);",
+    "  float sn = sin(tiltRad);",
+    "  vec2 rel = coord - rayPos;",
+    "  vec2 tiltedCoord = vec2(rel.x * cs - rel.y * sn, rel.x * sn + rel.y * cs) + rayPos;",
+    "  float halfSpread = iSpread * 0.275;",
+    "  vec2 rayRefDir1 = normalize(vec2(cos(0.785398 + halfSpread), sin(0.785398 + halfSpread)));",
+    "  vec2 rayRefDir2 = normalize(vec2(cos(0.785398 - halfSpread), sin(0.785398 - halfSpread)));",
+    "  vec4 rays1 = vec4(iRayColor1, 1.0) * rayStrength(rayPos, rayRefDir1, tiltedCoord, 36.2214, 21.11349, iSpeed);",
+    "  vec4 rays2 = vec4(iRayColor2, 1.0) * rayStrength(rayPos, rayRefDir2, tiltedCoord, 22.3991, 18.0234, iSpeed * 0.2);",
+    "  vec4 color = rays1 * (1.0 - iBlend) * 0.9 + rays2 * iBlend * 0.9;",
+    "  float distanceToLight = length(fragCoord.xy - vec2(rayPos.x, iResolution.y - rayPos.y)) / iResolution.y;",
+    "  float brightness = iIntensity * 0.4 / pow(max(distanceToLight, 0.001), iFalloff);",
+    "  color.rgb *= brightness;",
+    "  float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));",
+    "  color.rgb = mix(vec3(gray), color.rgb, iSaturation);",
+    "  color.a = max(color.r, max(color.g, color.b)) * iOpacity;",
+    "  gl_FragColor = color;",
+    "}"
+  ].join("\n");
+
+  function sideRays(container) {
+    if (!container) return;
+
+    var api = crearShader(container, RAYS_VERT, RAYS_FRAG, {
+      dpr: 1.25,
+      onResize: function (a, w, h) { a.v2("iResolution", w, h); },
+      onFrame: function (a, t) { a.f("iTime", t * 0.001); }
+    });
+
+    if (!api) return;
+
+    function aplicar() {
+      var oscuro = temaOscuro();
+      api.v3("iRayColor1", hexToRgb01(oscuro ? "#c5a35c" : "#b08c3e"))
+         .v3("iRayColor2", hexToRgb01(oscuro ? "#f0e3c0" : "#d9c48a"))
+         .f("iOpacity", oscuro ? 0.5 : 0.34)
+         .f("iIntensity", oscuro ? 1.5 : 1.2);
+    }
+
+    api.f("iSpeed", 2.2)
+       .f("iSpread", 2)
+       .f("iFlipX", 0)
+       .f("iFlipY", 0)
+       .f("iTilt", 0)
+       .f("iSaturation", 1.3)
+       .f("iBlend", 0.75)
+       .f("iFalloff", 1.7);
+    api.v2("iResolution", api.ancho, api.alto);
+
+    aplicar();
+    alCambiarTema(aplicar);
+  }
+
+  /* ==========================================================
+     DotField — fondo de Proyectos (canvas 2D)
+     ========================================================== */
+  function dotField(container, opts) {
+    if (!container) return;
+
+    var o = opts || {};
+    var dotRadius = o.dotRadius != null ? o.dotRadius : 1.6;
+    var dotSpacing = o.dotSpacing != null ? o.dotSpacing : 15;
+    var cursorRadius = o.cursorRadius != null ? o.cursorRadius : 320;
+    var bulgeStrength = o.bulgeStrength != null ? o.bulgeStrength : 52;
+
+    var canvas = document.createElement("canvas");
+    container.appendChild(canvas);
+    var ctx = canvas.getContext("2d", { alpha: true });
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    var puntos = [];
+    var size = { w: 0, h: 0 };
+    var mouse = { x: -9999, y: -9999, px: -9999, py: -9999, vel: 0 };
+    var enganche = 0;
+
+    function construir() {
+      var paso = dotRadius + dotSpacing;
+      var cols = Math.floor(size.w / paso);
+      var rows = Math.floor(size.h / paso);
+      var padX = (size.w % paso) / 2;
+      var padY = (size.h % paso) / 2;
+      puntos = [];
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var ax = padX + c * paso + paso / 2;
+          var ay = padY + r * paso + paso / 2;
+          puntos.push({ ax: ax, ay: ay, sx: ax, sy: ay });
+        }
+      }
+    }
+
+    function redimensionar() {
+      var rect = container.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      size.w = rect.width;
+      size.h = rect.height;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      construir();
+      dibujar();
+    }
+
+    function colores() {
+      return temaOscuro()
+        ? ["rgba(197, 163, 92, 0.42)", "rgba(217, 145, 145, 0.24)"]
+        : ["rgba(138, 108, 44, 0.38)", "rgba(125, 52, 52, 0.22)"];
+    }
+
+    function dibujar() {
+      if (!puntos.length) return;
+      ctx.clearRect(0, 0, size.w, size.h);
+
+      var c = colores();
+      var grad = ctx.createLinearGradient(0, 0, size.w, size.h);
+      grad.addColorStop(0, c[0]);
+      grad.addColorStop(1, c[1]);
+      ctx.fillStyle = grad;
+
+      var rad = dotRadius / 2;
+      var crSq = cursorRadius * cursorRadius;
+
+      ctx.beginPath();
+      for (var i = 0; i < puntos.length; i++) {
+        var d = puntos[i];
+        var dx = mouse.x - d.ax;
+        var dy = mouse.y - d.ay;
+        var distSq = dx * dx + dy * dy;
+
+        if (distSq < crSq && enganche > 0.01) {
+          var dist = Math.sqrt(distSq) || 0.001;
+          var f = 1 - dist / cursorRadius;
+          var empuje = f * f * bulgeStrength * enganche;
+          var ang = Math.atan2(dy, dx);
+          d.sx += (d.ax - Math.cos(ang) * empuje - d.sx) * 0.15;
+          d.sy += (d.ay - Math.sin(ang) * empuje - d.sy) * 0.15;
+        } else {
+          d.sx += (d.ax - d.sx) * 0.1;
+          d.sy += (d.ay - d.sy) * 0.1;
+        }
+
+        ctx.moveTo(d.sx + rad, d.sy);
+        ctx.arc(d.sx, d.sy, rad, 0, Math.PI * 2);
+      }
+      ctx.fill();
+    }
+
+    window.addEventListener("resize", function () {
+      clearTimeout(redimensionar._t);
+      redimensionar._t = setTimeout(redimensionar, 120);
+    });
+
+    window.addEventListener("mousemove", function (e) {
+      var r = container.getBoundingClientRect();
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
+    }, { passive: true });
+
+    var velInt = setInterval(function () {
+      var dx = mouse.px - mouse.x;
+      var dy = mouse.py - mouse.y;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      mouse.vel += (d - mouse.vel) * 0.5;
+      if (mouse.vel < 0.001) mouse.vel = 0;
+      mouse.px = mouse.x;
+      mouse.py = mouse.y;
+    }, 20);
+
+    redimensionar();
+    alCambiarTema(dibujar);
+
+    if (reduceMotion) { clearInterval(velInt); return; }
+
+    var raf = null;
+    function loop() {
+      var objetivo = Math.min(mouse.vel / 5, 1);
+      enganche += (objetivo - enganche) * 0.06;
+      if (enganche < 0.001) enganche = 0;
+      dibujar();
+      raf = requestAnimationFrame(loop);
+    }
+
+    alEstarVisible(container,
+      function () { redimensionar(); if (raf === null) raf = requestAnimationFrame(loop); },
+      function () { if (raf !== null) { cancelAnimationFrame(raf); raf = null; } }
+    );
+  }
+
+  /* ==========================================================
      Arranque
      ========================================================== */
   function init() {
@@ -460,6 +953,15 @@
       smooth: true,
       characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/{}[]();=+-*&$#@!0123456789"
     });
+
+    /* Ferrofluido — Portada (fondo transparente: conserva el papel) */
+    ferrofluid(document.getElementById("fluid-bg"));
+
+    /* Rayos de luz — Experiencia laboral */
+    sideRays(document.getElementById("rays-bg"));
+
+    /* Campo de puntos — Proyectos */
+    dotField(document.getElementById("dots-bg"));
   }
 
   if (document.readyState === "loading") {

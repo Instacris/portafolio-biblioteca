@@ -63,6 +63,60 @@
   backdrop-filter: blur(10px);
 }
 
+/* Secciones claras con fondo animado (rayos, puntos) */
+.has-bg,
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.has-bg > .wrap,
+.hero > .wrap {
+  position: relative;
+  z-index: 2;
+}
+
+/* ------------------------------------------------------------
+   Monograma K · sustituye al antiguo ornamento
+   ------------------------------------------------------------ */
+.k-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+}
+
+.k-mark svg {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+.logo-bubble .k-mark svg { width: 27px; height: 27px; }
+
+/* ------------------------------------------------------------
+   SplitText · el nombre entra letra por letra
+   ------------------------------------------------------------ */
+.split-parent { display: block; }
+
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.split-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(42px);
+  transition: opacity .7s ease, transform .8s cubic-bezier(.18, .82, .22, 1);
+  will-change: transform, opacity;
+}
+
+.split-parent.is-in .split-char {
+  opacity: 1;
+  transform: none;
+}
+
 /* ------------------------------------------------------------
    TextType · efecto máquina de escribir (solo portada)
    ------------------------------------------------------------ */
@@ -252,8 +306,8 @@
   right: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;   /* los tres botones van al centro */
+  gap: 12px;
   padding: 0 clamp(18px, 3vw, 40px);
   pointer-events: none;
   z-index: 120;
@@ -277,24 +331,13 @@
 }
 
 .logo-bubble {
-  padding: 0 22px;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-size: 1.16rem;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
+  width: var(--bubble-size);
+  padding: 0;
 }
 
-.logo-bubble .brand-mark { color: var(--gold); font-size: .74rem; }
-
-.logo-bubble:hover { border-color: var(--gold); }
-
-.bubble-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  pointer-events: auto;
+.logo-bubble:hover {
+  border-color: var(--gold);
+  transform: scale(1.06);
 }
 
 /* Botón de tema dentro de la barra de burbujas */
@@ -348,9 +391,10 @@
   align-items: center;
   justify-content: center;
   z-index: 110;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  /* Translúcido a propósito: el fondo de la página sigue viéndose */
+  background: color-mix(in srgb, var(--bg) 42%, transparent);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   opacity: 0;
   transition: opacity .3s ease;
 }
@@ -766,6 +810,382 @@ body.sin-fotos { --rail-space: 0px; }
 }
 
 /* ------------------------------------------------------------
+   Lanyard · credencial que cuelga y se balancea
+   ------------------------------------------------------------ */
+.lanyard {
+  position: relative;
+  width: 240px;
+  height: 470px;
+  margin: 30px auto 0;
+  z-index: 3;
+  touch-action: none;
+}
+
+.lanyard-band {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lanyard-band-path {
+  stroke: var(--gold);
+  stroke-width: 7;
+  opacity: .92;
+}
+
+.lanyard-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 148px;
+  height: 206px;
+  transform-origin: 50% 0;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .45);
+  padding: 18px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: grab;
+  user-select: none;
+  will-change: transform;
+}
+
+.lanyard.is-dragging .lanyard-card { cursor: grabbing; }
+
+.lanyard-hole {
+  width: 34px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line-strong);
+  margin-bottom: 4px;
+}
+
+.lanyard-photo {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--gold);
+  flex: 0 0 auto;
+}
+
+.lanyard-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lanyard-name {
+  font-family: var(--font-display);
+  font-size: .98rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.lanyard-role {
+  font-size: .56rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.lanyard-k { margin-top: auto; }
+.lanyard-k svg { width: 20px; height: 20px; }
+
+/* En PC cuelga en la franja derecha y desaparece al pasar la portada */
+@media (min-width: 1200px) {
+  .lanyard {
+    position: fixed;
+    right: 22px;
+    top: 76px;
+    width: 300px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .55s ease;
+    z-index: 61;
+  }
+
+  body[data-seccion="portada"] .lanyard {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* El riel de fotos se reserva para el resto de la página */
+  .photo-rail[data-state="portada"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* En teléfono y tablet no hay riel: la credencial es la imagen de portada */
+@media (max-width: 1199px) {
+  .photo-rail { display: none; }
+}
+
+/* ------------------------------------------------------------
+   Proyectos · solo imágenes, en color al pasar el cursor
+   ------------------------------------------------------------ */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.work {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .3s ease, transform .35s ease, box-shadow .35s ease;
+}
+
+.work:hover,
+.work:focus-visible {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.work-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* En reposo, blanco y negro */
+  filter: grayscale(1) contrast(.94) brightness(.98);
+  /* Sin transición hasta que la página asienta, para que la imagen
+     no se vea a color un instante antes de pasar a blanco y negro. */
+  transition: none;
+}
+
+body.efectos-listos .work-img {
+  transition: filter .55s ease, transform .7s cubic-bezier(.2, .7, .2, 1);
+}
+
+.work:hover .work-img,
+.work:focus-visible .work-img {
+  filter: none;                /* al pasar el cursor, a color */
+  transform: scale(1.06);
+}
+
+.work.sin-imagen .work-img { display: none; }
+
+.work-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .35s ease;
+  background: linear-gradient(to top, rgba(12, 10, 7, .88) 0%, rgba(12, 10, 7, .55) 55%, rgba(12, 10, 7, .3) 100%);
+}
+
+.work:hover .work-overlay,
+.work:focus-visible .work-overlay,
+.work.sin-imagen .work-overlay {
+  opacity: 1;
+}
+
+.work .work-numeral {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d9b96f;
+  letter-spacing: .06em;
+}
+
+.work-name {
+  font-family: var(--font-display);
+  font-size: 1.32rem;
+  font-weight: 600;
+  color: #fdfaf3;
+  line-height: 1.2;
+}
+
+.work-cta {
+  margin-top: 6px;
+  padding: 9px 20px;
+  border: 1px solid rgba(253, 250, 243, .5);
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  transition: background-color .3s ease, border-color .3s ease;
+}
+
+.work-cta .shiny-text {
+  --shiny-color: #fdfaf3;
+  --shiny-shine: #d9b96f;
+  --shiny-speed: 3.4s;
+}
+
+.work:hover .work-cta { border-color: #d9b96f; background: rgba(217, 185, 111, .16); }
+
+/* ------------------------------------------------------------
+   Ficha emergente de la obra
+   ------------------------------------------------------------ */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal.is-visible { display: flex; }
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 62%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.modal.is-open .modal-backdrop { opacity: 1; }
+
+.modal-card {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(86vh, 860px);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .55);
+  opacity: 0;
+  transform: translateY(22px) scale(.97);
+  transition: opacity .35s ease, transform .45s cubic-bezier(.2, .8, .25, 1);
+}
+
+.modal.is-open .modal-card {
+  opacity: 1;
+  transform: none;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .25s ease, color .25s ease, transform .25s ease;
+}
+
+.modal-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: rotate(90deg);
+}
+
+.modal-close svg { width: 17px; height: 17px; }
+
+.modal-media {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-body { padding: 30px 34px 34px; }
+
+.modal-kicker {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+  margin-bottom: 14px;
+}
+
+.modal-desc {
+  font-size: .95rem;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+
+.modal-tags {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+
+/* El enlace va al final, después de todo el texto */
+.modal-link { display: inline-flex; }
+
+@media (max-width: 860px) {
+  .works-grid { grid-template-columns: repeat(2, 1fr); }
+  .modal { padding: 14px; }
+  .modal-body { padding: 24px 22px 28px; }
+}
+
+@media (max-width: 560px) {
+  .works-grid { grid-template-columns: 1fr; }
+  /* Sin cursor no hay hover: la ficha se ve siempre */
+  .work-overlay { opacity: 1; }
+  .work-img { filter: none; }
+}
+
+/* ------------------------------------------------------------
    Accesibilidad · respeta "reducir movimiento"
    ------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
@@ -782,4 +1202,7 @@ body.sin-fotos { --rail-space: 0px; }
   .logoloop__track { transform: none !important; }
   .pill-link, .pill-label { transition-duration: .01ms; }
   .dock-item, .dock-item svg { transition: none; }
+  .split-char { opacity: 1; transform: none; transition: none; }
+  .work-img { transition: none; }
+  .modal-card, .modal-backdrop { transition: none; }
 }

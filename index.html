@@ -20,30 +20,27 @@
   <!-- Barra de progreso de lectura -->
   <div class="progress" id="progress" aria-hidden="true"></div>
 
-  <!-- ====== Navegación en burbujas ====== -->
+  <!-- ====== Navegación en burbujas (centrada) ====== -->
   <nav class="bubble-menu" aria-label="Navegación principal">
-    <a class="bubble logo-bubble" href="#portada">
-      <span class="brand-mark" aria-hidden="true">❖</span>
-      <span>Cristóbal Chacón</span>
+    <a class="bubble logo-bubble" href="#portada" aria-label="Inicio">
+      <span class="k-mark" data-k aria-hidden="true"></span>
     </a>
 
-    <div class="bubble-actions">
-      <button class="bubble theme-toggle" id="theme-toggle" type="button" aria-label="Cambiar tema">
-        <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.2"/>
-          <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/>
-        </svg>
-        <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M20.6 14.2A8.6 8.6 0 0 1 9.8 3.4a8.6 8.6 0 1 0 10.8 10.8Z"/>
-        </svg>
-      </button>
+    <button class="bubble theme-toggle" id="theme-toggle" type="button" aria-label="Cambiar tema">
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/>
+      </svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.6 14.2A8.6 8.6 0 0 1 9.8 3.4a8.6 8.6 0 1 0 10.8 10.8Z"/>
+      </svg>
+    </button>
 
-      <button class="bubble toggle-bubble" id="menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="bubble-items">
-        <span class="menu-line"></span>
-        <span class="menu-line short"></span>
-        <span class="menu-line"></span>
-      </button>
-    </div>
+    <button class="bubble toggle-bubble" id="menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="bubble-items">
+      <span class="menu-line"></span>
+      <span class="menu-line short"></span>
+      <span class="menu-line"></span>
+    </button>
   </nav>
 
   <!-- Capa de píldoras del menú -->
@@ -61,12 +58,14 @@
 
   <main id="inicio">
 
-    <!-- ====== Portada ====== -->
+    <!-- ====== Portada (fondo: ferrofluido) ====== -->
     <section class="hero" id="portada">
+      <div class="section-bg" id="fluid-bg" aria-hidden="true"></div>
+
       <div class="wrap hero-grid">
         <div class="hero-text">
-          <p class="kicker">Portafolio · MMXXVI</p>
-          <h1 class="hero-name">Cristóbal<br />Chacón</h1>
+          <p class="kicker">6 de enero de 2003</p>
+          <h1 class="hero-name" id="hero-name">Cristóbal Chacón</h1>
 
           <p class="hero-role">
             <span class="hero-role-mark">&lt;</span><span id="typed" class="text-type"></span><span class="hero-role-mark">&gt;</span>
@@ -89,16 +88,19 @@
                  role="region" aria-label="Tecnologías que utilizo"></div>
           </div>
         </div>
-
-        <!-- Riel de fotos: en PC queda fijo a la derecha y viaja con el scroll -->
-        <div class="photo-rail" id="photo-rail" data-state="portada" aria-hidden="true"></div>
       </div>
+
+      <!-- Credencial colgante: cuelga a la derecha y se balancea con la página -->
+      <div class="lanyard" id="lanyard" aria-hidden="true"></div>
+
+      <!-- Riel de fotos: toma el relevo desde Perfil en adelante -->
+      <div class="photo-rail" id="photo-rail" data-state="portada" aria-hidden="true"></div>
     </section>
 
     <!-- ====== Capítulo I · Perfil ====== -->
     <section id="perfil" class="chapter-section">
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">
           <p class="kicker">Capítulo I</p>
           <h2>Perfil</h2>
@@ -140,7 +142,7 @@
     <!-- ====== Capítulo II · Conocimientos ====== -->
     <section id="conocimientos" class="chapter-section">
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">
           <p class="kicker">Capítulo II</p>
           <h2>Conocimientos</h2>
@@ -172,7 +174,7 @@
       <div class="section-veil" aria-hidden="true"></div>
 
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">
           <p class="kicker">Capítulo III</p>
           <h2>Pasatiempos</h2>
@@ -185,10 +187,12 @@
       </div>
     </section>
 
-    <!-- ====== Capítulo IV · Experiencia ====== -->
-    <section id="experiencia" class="chapter-section">
+    <!-- ====== Capítulo IV · Experiencia (fondo: rayos de luz) ====== -->
+    <section id="experiencia" class="chapter-section has-bg">
+      <div class="section-bg" id="rays-bg" aria-hidden="true"></div>
+
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">
           <p class="kicker">Capítulo IV</p>
           <h2>Experiencia laboral</h2>
@@ -199,16 +203,18 @@
       </div>
     </section>
 
-    <!-- ====== Capítulo V · Proyectos ====== -->
-    <section id="proyectos" class="chapter-section">
+    <!-- ====== Capítulo V · Proyectos (fondo: campo de puntos) ====== -->
+    <section id="proyectos" class="chapter-section has-bg">
+      <div class="section-bg" id="dots-bg" aria-hidden="true"></div>
+
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">
           <p class="kicker">Capítulo V · Catálogo de obras</p>
           <h2>Proyectos</h2>
           <p class="chapter-sub">
-            Piezas publicadas y en producción: sistemas de gestión, comercios y sitios
-            institucionales. Cada una con su enlace en vivo.
+            Piezas publicadas y en producción. Pasa el cursor sobre una obra para
+            verla en color y ábrela para leer la ficha completa.
           </p>
         </header>
 
@@ -222,7 +228,7 @@
       <div class="section-veil" aria-hidden="true"></div>
 
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">
           <p class="kicker">Apéndices</p>
           <h2>Servicios &amp; ediciones</h2>
@@ -263,7 +269,7 @@
     <!-- ====== Epílogo · Contacto ====== -->
     <section id="contacto" class="chapter-section contact-section">
       <div class="wrap">
-        <div class="fleuron" aria-hidden="true"><span>❦</span></div>
+        <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter chapter-center reveal">
           <p class="kicker">Epílogo</p>
           <h2>Escribamos el siguiente capítulo</h2>
@@ -281,10 +287,39 @@
   <!-- ====== Colofón ====== -->
   <footer class="colophon">
     <div class="wrap">
-      <p>© <span id="year"></span> Cristóbal Chacón · Compuesto con código, café y una pizca de fantasía <span class="colophon-mark">❦</span></p>
+      <p>© <span id="year"></span> Cristóbal Chacón · Compuesto con código, café y una pizca de fantasía</p>
       <p class="colophon-edition">Edición II · «Biblioteca»</p>
     </div>
   </footer>
+
+  <!-- ====== Ficha emergente de cada obra ====== -->
+  <div class="modal" id="obra-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="obra-titulo">
+    <div class="modal-backdrop" data-cerrar></div>
+
+    <div class="modal-card">
+      <button class="modal-close" type="button" aria-label="Cerrar ficha" data-cerrar>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18"/>
+        </svg>
+      </button>
+
+      <figure class="modal-media">
+        <img id="obra-img" src="" alt="" />
+      </figure>
+
+      <div class="modal-body">
+        <p class="modal-kicker" id="obra-num"></p>
+        <h3 class="modal-title" id="obra-titulo"></h3>
+        <p class="modal-desc" id="obra-desc"></p>
+        <p class="modal-tags" id="obra-tags"></p>
+
+        <!-- El enlace va al final de todo el texto -->
+        <a class="btn solid modal-link" id="obra-link" href="#" target="_blank" rel="noopener">
+          <span data-shiny>Visitar el sitio ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>

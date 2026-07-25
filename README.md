@@ -27,15 +27,33 @@ así que están reimplementados a mano respetando su comportamiento y sus props:
 
 | Efecto | Dónde | Archivo |
 |---|---|---|
+| **SplitText** (letra por letra) | El nombre de la portada | `js/effects.js` |
 | **TextType** (máquina de escribir) | Solo la portada | `js/effects.js` |
-| **ShinyText** (brillo que recorre) | Títulos de obras y botones | `js/effects.js` + `css/effects.css` |
+| **ShinyText** (brillo que recorre) | Botones y llamada de las obras | `js/effects.js` + `css/effects.css` |
 | **LogoLoop** (cinta infinita) | Bajo el texto de la portada | `js/effects.js` |
-| **BubbleMenu** (menú de burbujas) | Navegación, PC y teléfono | `js/effects.js` |
+| **BubbleMenu** (menú de burbujas) | Navegación centrada, PC y teléfono | `js/effects.js` |
 | **TargetCursor** (mira) | Solo la sección Proyectos | `js/effects.js` |
+| **Lanyard** (credencial colgante) | Portada; cuerda con física verlet, se arrastra | `js/effects.js` |
+| **Ferrofluid** (WebGL) | Fondo de la portada | `js/backgrounds.js` |
 | **EvilEye** (ojo de fuego, WebGL) | Fondo de Pasatiempos | `js/backgrounds.js` |
+| **SideRays** (rayos, WebGL) | Fondo de Experiencia | `js/backgrounds.js` |
+| **DotField** (campo de puntos) | Fondo de Proyectos | `js/backgrounds.js` |
 | **LetterGlitch** (lluvia de letras) | Fondo de Servicios | `js/backgrounds.js` |
 | **Riel de fotos** | Viaja por la derecha al hacer scroll | `js/effects.js` |
 | **Dock de redes** | Epílogo, se abre al pasar el cursor | `js/effects.js` |
+
+## Las obras (Proyectos)
+Cada obra es **solo una imagen**, en blanco y negro; al pasar el cursor se ve a
+color y aparece el botón «Clickea para visualizar». Al hacer clic se abre una
+ficha con el título, la descripción, las tecnologías y, **al final de todo el
+texto**, el enlace al sitio en vivo.
+
+Las capturas viven en `img/proyectos/` y se enlazan con el campo `img` de cada
+proyecto en `js/data.js`.
+
+## Tema
+Arranca siempre en **modo claro**; el oscuro solo se usa si tú lo elegiste antes
+(se guarda en `localStorage`). No sigue la preferencia del sistema.
 
 Todos respetan «reducir movimiento» del sistema y los fondos animados se
 **pausan** cuando su sección no está a la vista.
