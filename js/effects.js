@@ -594,12 +594,16 @@
     var root = $("#lanyard");
     if (!root) return;
 
-    var ANCHO = 240;
-    var ALTO = 470;
     var N = 8;                 /* puntos de la cuerda */
-    var SEG = 17;              /* largo de cada tramo */
     var CARD_W = 148;
     var CARD_H = 206;
+
+    /* El SVG tiene que usar EXACTAMENTE los píxeles del contenedor:
+       si el viewBox no coincide, la banda se estira y la cuerda deja
+       de caer sobre la tarjeta. */
+    var ANCHO = root.clientWidth || 240;
+    var ALTO = root.clientHeight || 470;
+    var SEG = 17;              /* largo de cada tramo (se recalcula) */
 
     root.innerHTML =
       '<svg class="lanyard-band" viewBox="0 0 ' + ANCHO + " " + ALTO + '" preserveAspectRatio="none" aria-hidden="true">' +
@@ -622,10 +626,37 @@
     var anchorX = ANCHO / 2;
     var anchorY = 6;
 
+    /* Recalcula el sistema de coordenadas cuando cambia el tamaño.
+       La cuerda se reparte el alto libre que queda sobre la tarjeta. */
+    var medido = false;
+
+    function medir() {
+      var w = root.clientWidth || ANCHO;
+      var h = root.clientHeight || ALTO;
+      if (medido && w === ANCHO && h === ALTO) return;
+      medido = true;
+
+      ANCHO = w;
+      ALTO = h;
+      anchorX = ANCHO / 2;
+      SEG = Math.max(12, (ALTO - CARD_H - anchorY - 18) / (N - 1));
+      $(".lanyard-band", root).setAttribute("viewBox", "0 0 " + ANCHO + " " + ALTO);
+    }
+
+    medir();
+
     var pts = [];
     for (var i = 0; i < N; i++) {
       pts.push({ x: anchorX, y: anchorY + i * SEG, ox: anchorX, oy: anchorY + i * SEG });
     }
+
+    window.addEventListener("resize", function () {
+      var antes = anchorX;
+      medir();
+      /* Traslada la cuerda al nuevo centro para que no dé un salto */
+      var dx = anchorX - antes;
+      for (var i = 0; i < N; i++) { pts[i].x += dx; pts[i].ox += dx; }
+    });
 
     var arrastrando = false;
     var dragX = 0, dragY = 0;
@@ -665,10 +696,13 @@
           pts[N - 1].y = dragY;
         }
 
-        /* No dejamos que la cuerda se salga del contenedor */
+        /* La tarjeta cuelga del último punto: se limita el balanceo
+           para que no se salga por los lados del contenedor. */
+        var margen = CARD_W / 2 + 6;
         for (var m = 1; m < N; m++) {
-          if (pts[m].x < 22) pts[m].x = 22;
-          if (pts[m].x > ANCHO - 22) pts[m].x = ANCHO - 22;
+          var lim = (m === N - 1) ? margen : 20;
+          if (pts[m].x < lim) pts[m].x = lim;
+          if (pts[m].x > ANCHO - lim) pts[m].x = ANCHO - lim;
         }
       }
     }
@@ -844,6 +878,171 @@
   }
 
   /* ==========================================================
+     13 · MagicBento — foco que sigue al cursor, brillo de borde,
+     partículas, inclinación, magnetismo y onda al hacer clic.
+     Se aplica a las obras del catálogo (no crea tarjetas nuevas).
+     ========================================================== */
+  function magicBento(opts) {
+    var o = opts || {};
+    var seccion = $(o.seccion || "#proyectos");
+    if (!seccion) return;
+
+    var tarjetas = $$(".work", seccion);
+    if (!tarjetas.length) return;
+
+    var glow = o.glowColor || "176, 140, 62";
+    var radio = o.spotlightRadius != null ? o.spotlightRadius : 320;
+    var nParticulas = o.particleCount != null ? o.particleCount : 10;
+
+    /* En táctil y con "reducir movimiento" solo queda el diseño base */
+    var apagado = isTouch || reduceMotion;
+
+    seccion.style.setProperty("--bento-glow", glow);
+    tarjetas.forEach(function (t) {
+      t.classList.add("bento-card");
+      t.style.setProperty("--glow-radius", radio + "px");
+    });
+
+    if (apagado) return;
+
+    /* --- Foco global --- */
+    var foco = document.createElement("div");
+    foco.className = "bento-spotlight";
+    foco.style.background =
+      "radial-gradient(circle, rgba(" + glow + ", .16) 0%, rgba(" + glow + ", .08) 18%," +
+      " rgba(" + glow + ", .04) 32%, rgba(" + glow + ", .015) 55%, transparent 70%)";
+    document.body.appendChild(foco);
+
+    var proximidad = radio * 0.5;
+    var desvanecido = radio * 0.75;
+
+    document.addEventListener("mousemove", function (e) {
+      var r = seccion.getBoundingClientRect();
+      var dentro = e.clientX >= r.left && e.clientX <= r.right &&
+                   e.clientY >= r.top && e.clientY <= r.bottom;
+
+      if (!dentro) {
+        foco.style.opacity = "0";
+        tarjetas.forEach(function (t) { t.style.setProperty("--glow-intensity", "0"); });
+        return;
+      }
+
+      var minDist = Infinity;
+
+      tarjetas.forEach(function (t) {
+        var cr = t.getBoundingClientRect();
+        var cx = cr.left + cr.width / 2;
+        var cy = cr.top + cr.height / 2;
+        var d = Math.max(0, Math.hypot(e.clientX - cx, e.clientY - cy) - Math.max(cr.width, cr.height) / 2);
+        minDist = Math.min(minDist, d);
+
+        var intensidad = 0;
+        if (d <= proximidad) intensidad = 1;
+        else if (d <= desvanecido) intensidad = (desvanecido - d) / (desvanecido - proximidad);
+
+        t.style.setProperty("--glow-x", (((e.clientX - cr.left) / cr.width) * 100) + "%");
+        t.style.setProperty("--glow-y", (((e.clientY - cr.top) / cr.height) * 100) + "%");
+        t.style.setProperty("--glow-intensity", String(intensidad));
+      });
+
+      foco.style.left = e.clientX + "px";
+      foco.style.top = e.clientY + "px";
+      foco.style.opacity = String(
+        minDist <= proximidad ? 0.8
+          : minDist <= desvanecido ? ((desvanecido - minDist) / (desvanecido - proximidad)) * 0.8
+          : 0
+      );
+    }, { passive: true });
+
+    /* --- Partículas, inclinación, magnetismo y onda por tarjeta --- */
+    tarjetas.forEach(function (t) {
+      var particulas = [];
+      var temporizadores = [];
+      var dentro = false;
+
+      function limpiarParticulas() {
+        temporizadores.forEach(clearTimeout);
+        temporizadores = [];
+        particulas.forEach(function (p) {
+          p.classList.remove("is-in");
+          setTimeout(function () { if (p.parentNode) p.parentNode.removeChild(p); }, 320);
+        });
+        particulas = [];
+      }
+
+      t.addEventListener("mouseenter", function () {
+        dentro = true;
+        var r = t.getBoundingClientRect();
+
+        for (var i = 0; i < nParticulas; i++) {
+          (function (i) {
+            var id = setTimeout(function () {
+              if (!dentro) return;
+              var p = document.createElement("span");
+              p.className = "bento-particle";
+              p.style.left = (Math.random() * r.width) + "px";
+              p.style.top = (Math.random() * r.height) + "px";
+              p.style.setProperty("--dx", ((Math.random() - 0.5) * 74) + "px");
+              p.style.setProperty("--dy", ((Math.random() - 0.5) * 74) + "px");
+              p.style.setProperty("--dur", (2.4 + Math.random() * 2) + "s");
+              t.appendChild(p);
+              particulas.push(p);
+              requestAnimationFrame(function () { p.classList.add("is-in"); });
+              setTimeout(function () { p.classList.add("is-in"); }, 30);
+            }, i * 90);
+            temporizadores.push(id);
+          })(i);
+        }
+      });
+
+      t.addEventListener("mouseleave", function () {
+        dentro = false;
+        limpiarParticulas();
+        t.style.transform = "";
+      });
+
+      t.addEventListener("mousemove", function (e) {
+        var r = t.getBoundingClientRect();
+        var x = e.clientX - r.left;
+        var y = e.clientY - r.top;
+        var cx = r.width / 2;
+        var cy = r.height / 2;
+
+        var rotX = ((y - cy) / cy) * -7;
+        var rotY = ((x - cx) / cx) * 7;
+        var magX = (x - cx) * 0.035;
+        var magY = (y - cy) * 0.035;
+
+        t.style.transform =
+          "perspective(900px) rotateX(" + rotX.toFixed(2) + "deg) rotateY(" + rotY.toFixed(2) + "deg)" +
+          " translate3d(" + magX.toFixed(1) + "px," + (magY - 4).toFixed(1) + "px,0)";
+      });
+
+      t.addEventListener("click", function (e) {
+        var r = t.getBoundingClientRect();
+        var x = e.clientX - r.left;
+        var y = e.clientY - r.top;
+        var max = Math.max(
+          Math.hypot(x, y),
+          Math.hypot(x - r.width, y),
+          Math.hypot(x, y - r.height),
+          Math.hypot(x - r.width, y - r.height)
+        );
+
+        var onda = document.createElement("span");
+        onda.className = "bento-ripple";
+        onda.style.width = onda.style.height = (max * 2) + "px";
+        onda.style.left = (x - max) + "px";
+        onda.style.top = (y - max) + "px";
+        onda.style.background =
+          "radial-gradient(circle, rgba(" + glow + ", .4) 0%, rgba(" + glow + ", .2) 30%, transparent 70%)";
+        t.appendChild(onda);
+        setTimeout(function () { if (onda.parentNode) onda.parentNode.removeChild(onda); }, 820);
+      });
+    });
+  }
+
+  /* ==========================================================
      Arranque
      ========================================================== */
   function init() {
@@ -869,6 +1068,7 @@
     dock();
     bubbleMenu();
     targetCursor({ zona: "#proyectos", targetSelector: ".cursor-target", spinDuration: 2 });
+    magicBento({ seccion: "#proyectos", glowColor: "176, 140, 62", spotlightRadius: 320, particleCount: 10 });
 
     /* Brillo en los botones de la portada y de los apéndices */
     $$("[data-shiny]").forEach(aplicarShiny);

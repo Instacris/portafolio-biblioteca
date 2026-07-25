@@ -36,8 +36,8 @@ así que están reimplementados a mano respetando su comportamiento y sus props:
 | **Lanyard** (credencial colgante) | Portada; cuerda con física verlet, se arrastra | `js/effects.js` |
 | **Ferrofluid** (WebGL) | Fondo de la portada | `js/backgrounds.js` |
 | **EvilEye** (ojo de fuego, WebGL) | Fondo de Pasatiempos | `js/backgrounds.js` |
-| **SideRays** (rayos, WebGL) | Fondo de Experiencia | `js/backgrounds.js` |
-| **DotField** (campo de puntos) | Fondo de Proyectos | `js/backgrounds.js` |
+| **LightPillar** (pilar de luz, WebGL) | Fondo de Experiencia | `js/backgrounds.js` |
+| **MagicBento** (foco, brillo, partículas) | Sobre las obras de Proyectos | `js/effects.js` |
 | **LetterGlitch** (lluvia de letras) | Fondo de Servicios | `js/backgrounds.js` |
 | **Riel de fotos** | Viaja por la derecha al hacer scroll | `js/effects.js` |
 | **Dock de redes** | Epílogo, se abre al pasar el cursor | `js/effects.js` |
@@ -50,6 +50,14 @@ texto**, el enlace al sitio en vivo.
 
 Las capturas viven en `img/proyectos/` y se enlazan con el campo `img` de cada
 proyecto en `js/data.js`.
+
+Encima de esas tarjetas actúa **MagicBento**: un foco que sigue al cursor por
+toda la sección, brillo de borde según la cercanía, partículas al pasar por
+encima, inclinación 3D con magnetismo y una onda al hacer clic. En pantallas
+táctiles se desactiva solo.
+
+> `sideRays()` y `dotField()` siguen en `js/backgrounds.js` sin usarse, por si
+> se quiere volver a esos fondos.
 
 ## Tema
 Arranca siempre en **modo claro**; el oscuro solo se usa si tú lo elegiste antes

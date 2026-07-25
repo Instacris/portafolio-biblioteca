@@ -962,12 +962,15 @@ body.sin-fotos { --rail-space: 0px; }
   transition: border-color .3s ease, transform .35s ease, box-shadow .35s ease;
 }
 
+/* Sin transform aquí: la inclinación y el magnetismo se aplican
+   por JS (MagicBento) y se pisarían entre sí. */
 .work:hover,
 .work:focus-visible {
   border-color: var(--gold);
-  transform: translateY(-4px);
   box-shadow: var(--shadow);
 }
+
+.work:focus-visible { transform: translateY(-4px); }
 
 .work-img {
   width: 100%;
@@ -1049,6 +1052,96 @@ body.efectos-listos .work-img {
 }
 
 .work:hover .work-cta { border-color: #d9b96f; background: rgba(217, 185, 111, .16); }
+
+/* ------------------------------------------------------------
+   MagicBento · foco, brillo de borde, partículas y onda
+   ------------------------------------------------------------ */
+.bento-section { position: relative; user-select: none; }
+
+.bento-card {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 320px;
+  transform-style: preserve-3d;
+}
+
+/* Brillo que recorre el borde según dónde esté el cursor */
+.bento-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--bento-glow, 176, 140, 62), calc(var(--glow-intensity) * .9)) 0%,
+    rgba(var(--bento-glow, 176, 140, 62), calc(var(--glow-intensity) * .45)) 30%,
+    transparent 60%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Foco global que sigue al cursor dentro del catálogo */
+.bento-spotlight {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 740px;
+  height: 740px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 40;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity .28s ease;
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+
+:root[data-theme="dark"] .bento-spotlight { mix-blend-mode: screen; }
+
+/* Partículas que aparecen al pasar el cursor por una obra */
+.bento-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(var(--bento-glow, 176, 140, 62), 1);
+  box-shadow: 0 0 6px rgba(var(--bento-glow, 176, 140, 62), .6);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  scale: 0;
+  /* `translate` va aparte de `scale` para que no se pisen */
+  animation: bento-float var(--dur, 3s) ease-in-out infinite alternate;
+  transition: opacity .3s ease, scale .32s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+.bento-particle.is-in { opacity: .9; scale: 1; }
+
+@keyframes bento-float {
+  to { translate: var(--dx, 0) var(--dy, 0); }
+}
+
+/* Onda al hacer clic */
+.bento-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 6;
+  animation: bento-ripple .8s ease-out forwards;
+}
+
+@keyframes bento-ripple {
+  from { transform: scale(0); opacity: 1; }
+  to   { transform: scale(1); opacity: 0; }
+}
 
 /* ------------------------------------------------------------
    Ficha emergente de la obra
@@ -1205,4 +1298,6 @@ body.efectos-listos .work-img {
   .split-char { opacity: 1; transform: none; transition: none; }
   .work-img { transition: none; }
   .modal-card, .modal-backdrop { transition: none; }
+  .bento-card::after { display: none; }
+  .bento-particle, .bento-ripple { display: none; }
 }

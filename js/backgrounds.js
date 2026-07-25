@@ -699,7 +699,152 @@
   }
 
   /* ==========================================================
-     SideRays — fondo de Experiencia laboral
+     LightPillar — fondo de Experiencia laboral
+     Portado desde Three.js a WebGL directo. Dos cambios respecto
+     al original:
+       · tanh() no existe en GLSL ES 1.00 → se implementa a mano.
+       · el alfa sale del brillo, así el fondo del pilar queda
+         transparente y se conserva el color del papel (sin
+         depender de mix-blend-mode, que sobre papel claro
+         desaparecía).
+     ========================================================== */
+  var PILLAR_VERT = [
+    "attribute vec2 position;",
+    "attribute vec2 uv;",
+    "varying vec2 vUv;",
+    "void main() { vUv = uv; gl_Position = vec4(position, 0.0, 1.0); }"
+  ].join("\n");
+
+  var PILLAR_FRAG = [
+    "precision highp float;",
+    "uniform float uTime;",
+    "uniform vec2 uResolution;",
+    "uniform vec2 uMouse;",
+    "uniform vec3 uTopColor;",
+    "uniform vec3 uBottomColor;",
+    "uniform float uIntensity;",
+    "uniform float uInteractive;",
+    "uniform float uGlowAmount;",
+    "uniform float uPillarWidth;",
+    "uniform float uPillarHeight;",
+    "uniform float uNoiseIntensity;",
+    "uniform float uOpacity;",
+    "uniform float uRotCos;",
+    "uniform float uRotSin;",
+    "uniform float uPillarRotCos;",
+    "uniform float uPillarRotSin;",
+    "uniform float uWaveSin;",
+    "uniform float uWaveCos;",
+    "varying vec2 vUv;",
+    "const float STEP_MULT = 1.2;",
+    "const int MAX_ITER = 44;",
+    "const int WAVE_ITER = 2;",
+    /* tanh no existe en GLSL ES 1.00: se acota para evitar desbordes */
+    "vec3 tanh3(vec3 x) {",
+    "  x = clamp(x, -8.0, 8.0);",
+    "  vec3 e = exp(2.0 * x);",
+    "  return (e - 1.0) / (e + 1.0);",
+    "}",
+    "void main() {",
+    "  vec2 uv = (vUv * 2.0 - 1.0) * vec2(uResolution.x / uResolution.y, 1.0);",
+    "  uv = vec2(uPillarRotCos * uv.x - uPillarRotSin * uv.y, uPillarRotSin * uv.x + uPillarRotCos * uv.y);",
+    "  vec3 ro = vec3(0.0, 0.0, -10.0);",
+    "  vec3 rd = normalize(vec3(uv, 1.0));",
+    "  float rotC = uRotCos;",
+    "  float rotS = uRotSin;",
+    "  if (uInteractive > 0.5 && (uMouse.x != 0.0 || uMouse.y != 0.0)) {",
+    "    float a = uMouse.x * 6.283185;",
+    "    rotC = cos(a);",
+    "    rotS = sin(a);",
+    "  }",
+    "  vec3 col = vec3(0.0);",
+    "  float t = 0.1;",
+    "  for (int i = 0; i < MAX_ITER; i++) {",
+    "    vec3 p = ro + rd * t;",
+    "    p.xz = vec2(rotC * p.x - rotS * p.z, rotS * p.x + rotC * p.z);",
+    "    vec3 q = p;",
+    "    q.y = p.y * uPillarHeight + uTime;",
+    "    float freq = 1.0;",
+    "    float amp = 1.0;",
+    "    for (int j = 0; j < WAVE_ITER; j++) {",
+    "      q.xz = vec2(uWaveCos * q.x - uWaveSin * q.z, uWaveSin * q.x + uWaveCos * q.z);",
+    "      q += cos(q.zxy * freq - uTime * float(j) * 2.0) * amp;",
+    "      freq *= 2.0;",
+    "      amp *= 0.5;",
+    "    }",
+    "    float d = length(cos(q.xz)) - 0.2;",
+    "    float bound = length(p.xz) - uPillarWidth;",
+    "    float k = 4.0;",
+    "    float h = max(k - abs(d - bound), 0.0);",
+    "    d = max(d, bound) + h * h * 0.0625 / k;",
+    "    d = abs(d) * 0.15 + 0.01;",
+    "    float grad = clamp((15.0 - p.y) / 30.0, 0.0, 1.0);",
+    "    col += mix(uBottomColor, uTopColor, grad) / d;",
+    "    t += d * STEP_MULT;",
+    "    if (t > 50.0) break;",
+    "  }",
+    "  float widthNorm = uPillarWidth / 3.0;",
+    "  col = tanh3(col * uGlowAmount / widthNorm);",
+    "  col -= fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) / 15.0 * uNoiseIntensity;",
+    "  col = max(col, vec3(0.0));",
+    "  col *= uIntensity;",
+    "  float a = clamp(max(col.r, max(col.g, col.b)), 0.0, 1.0);",
+    "  gl_FragColor = vec4(col, a * uOpacity);",
+    "}"
+  ].join("\n");
+
+  function lightPillar(container, opts) {
+    if (!container) return;
+
+    var o = opts || {};
+    var tiempo = 0;
+    var rotSpeed = o.rotationSpeed != null ? o.rotationSpeed : 0.3;
+    var ultimo = null;
+
+    var api = crearShader(container, PILLAR_VERT, PILLAR_FRAG, {
+      dpr: 1.1,
+      onResize: function (a, w, h) { a.v2("uResolution", w, h); },
+      onFrame: function (a, t) {
+        if (ultimo === null) ultimo = t;
+        var dt = Math.min(64, t - ultimo) / 1000;
+        ultimo = t;
+        tiempo += dt * rotSpeed;
+        a.f("uTime", tiempo);
+        a.f("uRotCos", Math.cos(tiempo * 0.3));
+        a.f("uRotSin", Math.sin(tiempo * 0.3));
+      }
+    });
+
+    if (!api) return;
+
+    var rot = ((o.pillarRotation || 0) * Math.PI) / 180;
+
+    api.f("uIntensity", o.intensity != null ? o.intensity : 1)
+       .f("uInteractive", 0)
+       .v2("uMouse", 0, 0)
+       .f("uGlowAmount", o.glowAmount != null ? o.glowAmount : 0.005)
+       .f("uPillarWidth", o.pillarWidth != null ? o.pillarWidth : 3)
+       .f("uPillarHeight", o.pillarHeight != null ? o.pillarHeight : 0.4)
+       .f("uNoiseIntensity", o.noiseIntensity != null ? o.noiseIntensity : 0.5)
+       .f("uPillarRotCos", Math.cos(rot))
+       .f("uPillarRotSin", Math.sin(rot))
+       .f("uWaveSin", Math.sin(0.4))
+       .f("uWaveCos", Math.cos(0.4));
+    api.v2("uResolution", api.ancho, api.alto);
+
+    function aplicar() {
+      var oscuro = temaOscuro();
+      api.v3("uTopColor", hexToRgb01(oscuro ? "#e8cb88" : "#b08c3e"))
+         .v3("uBottomColor", hexToRgb01(oscuro ? "#c98383" : "#7d3434"))
+         .f("uOpacity", oscuro ? 0.72 : 0.46);
+    }
+
+    aplicar();
+    alCambiarTema(aplicar);
+  }
+
+  /* ==========================================================
+     SideRays — disponible por si se quiere volver a usar
      ========================================================== */
   var RAYS_VERT = [
     "attribute vec2 position;",
@@ -792,7 +937,8 @@
   }
 
   /* ==========================================================
-     DotField — fondo de Proyectos (canvas 2D)
+     DotField — sin usar (Proyectos pasó a MagicBento).
+     Se conserva por si se quiere volver a él.
      ========================================================== */
   function dotField(container, opts) {
     if (!container) return;
@@ -957,11 +1103,16 @@
     /* Ferrofluido — Portada (fondo transparente: conserva el papel) */
     ferrofluid(document.getElementById("fluid-bg"));
 
-    /* Rayos de luz — Experiencia laboral */
-    sideRays(document.getElementById("rays-bg"));
-
-    /* Campo de puntos — Proyectos */
-    dotField(document.getElementById("dots-bg"));
+    /* Pilar de luz — Experiencia laboral */
+    lightPillar(document.getElementById("pillar-bg"), {
+      intensity: 1,
+      rotationSpeed: 0.3,
+      glowAmount: 0.005,
+      pillarWidth: 3,
+      pillarHeight: 0.4,
+      noiseIntensity: 0.35,
+      pillarRotation: 0
+    });
   }
 
   if (document.readyState === "loading") {
