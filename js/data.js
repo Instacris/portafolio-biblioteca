@@ -3,14 +3,26 @@
    proyectos y contacto). El resto de la página se arma sola.
    ============================================================ */
 
-/* --- LENGUAJES DE PROGRAMACIÓN (nombre / nivel %) --- */
-const LENGUAJES = [
-  { name: "JavaScript", level: 90 },
-  { name: "HTML5",      level: 95 },
-  { name: "CSS3",       level: 90 },
-  { name: "Python",     level: 80 },
-  { name: "Java",       level: 70 },
-  { name: "SQL",        level: 75 },
+/* --- MI EDUCACIÓN (state: "en curso" o "listo") --- */
+const EDUCACION = [
+  {
+    title: "Ingeniería en Ejecución de Sistemas",
+    place: "Educación superior",
+    detail: "Continuación de la formación técnica hacia el grado de ingeniería: arquitectura de sistemas, gestión de proyectos y desarrollo avanzado.",
+    state: "en curso",
+  },
+  {
+    title: "Analista de Sistemas · Programador",
+    place: "Carrera técnica",
+    detail: "Análisis y diseño de sistemas, programación y bases de datos. Es la base de todo lo que construyo hoy.",
+    state: "listo",
+  },
+  {
+    title: "Enseñanza media completa",
+    place: "4º medio",
+    detail: "Educación media finalizada.",
+    state: "listo",
+  },
 ];
 
 /* --- HERRAMIENTAS DE TRABAJO (nombre / descripción / etiqueta) --- */
@@ -97,20 +109,6 @@ const PROYECTOS = [
     tags: ["JavaScript", "Excel", "LocalStorage"],
   },
   {
-    name: "Superpan · Amasandería",
-    img: "img/proyectos/superpan.png",
-    desc: "Sitio comercial mobile-first para una amasandería y pastelería de Quinta Normal: catálogo con filtros, pedidos por WhatsApp, SEO y panel de administración.",
-    link: "https://superpan-web.vercel.app",
-    tags: ["HTML", "CSS", "JavaScript", "SEO"],
-  },
-  {
-    name: "Clínica Quillay",
-    img: "img/proyectos/clinica-quillay.png",
-    desc: "Landing institucional para una clínica: reserva de horas en 4 pasos con validación de RUT, buscador de especialidades, FAQ y diseño accesible.",
-    link: "https://clinica-quillay.vercel.app",
-    tags: ["HTML", "CSS", "JS vanilla"],
-  },
-  {
     name: "Planetario Austral",
     img: "img/proyectos/planetario.png",
     desc: "Sitio educativo con buscador de astros, módulos de aprendizaje verificados con NASA/ESA y una zona Kids gamificada con estrellas por descubrir.",
@@ -125,26 +123,19 @@ const PROYECTOS = [
     tags: ["HTML", "CSS", "JavaScript"],
   },
   {
-    name: "ORIGEN · Tienda de Café",
-    img: "img/proyectos/origen.png",
-    desc: "Tienda online de café y máquinas con carrito, checkout que descuenta stock y panel de administración completo (productos, pedidos y ajustes).",
-    link: "https://origen-cafe-eta.vercel.app",
-    tags: ["JavaScript", "E-commerce", "Admin"],
-  },
-  {
-    name: "Ébano · Alta Sastrería",
-    img: "img/proyectos/ebano.png",
-    desc: "Sitio para una casa de sastrería de alta gama: trajes a medida, alta costura y calzado artesanal. Agenda de citas y consultas por WhatsApp o correo, muestrario de telas en CSS puro y doble tema.",
-    link: "https://ebano-sastreria.vercel.app",
-    tags: ["HTML", "CSS", "JS vanilla", "UI/UX"],
+    name: "Café Aurora · Cafetería de Especialidad",
+    img: "img/proyectos/cafe-aurora.jpg",
+    desc: "Sitio para una cafetería de especialidad con robot 3D interactivo en la portada sobre un degradado animado por shader. Carta filtrable por tipo de bebida, botones de vidrio con agua simulada que se sacude al pasar el cursor, y sección de delivery con una carretera de luces en WebGL.",
+    link: "https://cafe-aurora-theta.vercel.app",
+    tags: ["JavaScript", "WebGL", "Three.js", "Spline 3D", "Canvas"],
   },
 ];
 
 /* --- FRASES DE LA PORTADA (efecto máquina de escribir) --- */
 const FRASES = [
   "Desarrollador web",
-  "Analista informático",
-  "Sistemas a medida",
+  "Analista de sistemas",
+  "Estudiante de ingeniería",
   "Lector de fantasía",
 ];
 
@@ -152,18 +143,18 @@ const FRASES = [
 const PASATIEMPOS = [
   {
     icon: "libro",
-    title: "Libros y fantasía",
-    desc: "Mundos con reglas propias, mapas al principio y un buen final. De ahí saco la manía de que todo tenga estructura.",
+    title: "Fantasía y terror",
+    desc: "El Señor de los Anillos y todo el Cosmere de Sanderson: Mistborn y El Archivo de las Tormentas. Del otro lado, Stephen King con It y Misery. Mundos con reglas propias y finales que se sostienen.",
   },
   {
-    icon: "mando",
-    title: "Videojuegos",
-    desc: "Mi primera escuela de diseño: menús, ritmo, recompensa y esa sensación de que la interfaz responde bien.",
+    icon: "pantalla",
+    title: "Series",
+    desc: "Crimen e investigación con El Mentalista y Dr. House; humor con The Big Bang Theory y Rick y Morty. Me quedo con las que resuelven bien el rompecabezas.",
   },
   {
-    icon: "familia",
-    title: "Tiempo en familia",
-    desc: "Desconectar del teclado con mi hermano chico. Las mejores ideas siempre llegan lejos del computador.",
+    icon: "engranaje",
+    title: "Estudiar y construir",
+    desc: "Ingeniería informática, trabajo de medio tiempo para costear la carrera y desarrollo de páginas web para clientes. Los tres a la vez, y el código es el que más me entretiene.",
   },
 ];
 
@@ -212,7 +203,7 @@ const CONTACTO = {
 };
 
 /* Exponer en window para que main.js pueda leerlos */
-window.LENGUAJES = LENGUAJES;
+window.EDUCACION = EDUCACION;
 window.HERRAMIENTAS = HERRAMIENTAS;
 window.EXCEL_SKILLS = EXCEL_SKILLS;
 window.EXPERIENCIA = EXPERIENCIA;

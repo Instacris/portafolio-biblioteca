@@ -1,8 +1,8 @@
 /* ============================================================
    EFECTOS · Componentes interactivos del portafolio
    Reimplementación en JS/CSS puro (sin React ni dependencias):
-   TextType · ShinyText · LogoLoop · BubbleMenu · TargetCursor
-   Riel de fotos con scroll · Dock de redes · Fondos animados
+   SplitText · TextType · ShinyText · LogoLoop · BubbleMenu
+   ElectricBorder · MagicBento · Riel de fotos · Dock de redes
    ============================================================ */
 
 /* ------------------------------------------------------------
@@ -55,12 +55,13 @@
     radial-gradient(ellipse 70% 55% at 50% 50%, rgba(14, 16, 22, .3) 0%, rgba(14, 16, 22, .82) 70%, rgba(14, 16, 22, .96) 100%);
 }
 
+/* Sin backdrop-filter aquí a propósito: el desenfoque de fondo en
+   varias tarjetas a la vez es caro de componer y estos paneles ya
+   llevan un fondo semiopaco que basta para leerlos. */
 .section-dark .panel,
 .section-dark .cover,
 .section-dark .ficha {
-  background: var(--surface);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, #161921 88%, transparent);
 }
 
 /* Secciones claras con fondo animado (rayos, puntos) */
@@ -495,72 +496,6 @@
 }
 
 /* ------------------------------------------------------------
-   TargetCursor · mira que se ancla a las obras (solo proyectos)
-   ------------------------------------------------------------ */
-.target-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-
-.target-cursor.is-active { opacity: 1; }
-
-.target-cursor__spin {
-  position: absolute;
-  inset: 0;
-  animation: cursor-spin var(--spin-duration, 2s) linear infinite;
-}
-
-.target-cursor.is-targeting .target-cursor__spin {
-  animation: none;
-  transform: rotate(0deg);
-}
-
-@keyframes cursor-spin {
-  to { transform: rotate(360deg); }
-}
-
-.target-cursor__dot {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 4px;
-  background: #fff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform .3s ease;
-}
-
-.target-cursor.is-down .target-cursor__dot { transform: translate(-50%, -50%) scale(.6); }
-
-.target-cursor__corner {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 12px;
-  height: 12px;
-  border: 2.5px solid #fff;
-  transition: transform .22s cubic-bezier(.3, .8, .3, 1);
-}
-
-.corner-tl { transform: translate(-150%, -150%); border-right: none; border-bottom: none; }
-.corner-tr { transform: translate(50%, -150%);   border-left: none;  border-bottom: none; }
-.corner-br { transform: translate(50%, 50%);     border-left: none;  border-top: none; }
-.corner-bl { transform: translate(-150%, 50%);   border-right: none; border-top: none; }
-
-/* Oculta el cursor nativo solo dentro del catálogo de obras */
-body.cursor-hidden #proyectos,
-body.cursor-hidden #proyectos * { cursor: none !important; }
-
-/* ------------------------------------------------------------
    Riel de fotos · viajan por la página al hacer scroll
    ------------------------------------------------------------ */
 .photo-rail {
@@ -810,129 +745,277 @@ body.sin-fotos { --rail-space: 0px; }
 }
 
 /* ------------------------------------------------------------
-   Lanyard · credencial que cuelga y se balancea
+   Servicios sin fondo animado: degradado estático (más ligero)
    ------------------------------------------------------------ */
-.lanyard {
-  position: relative;
-  width: 240px;
-  height: 470px;
-  margin: 30px auto 0;
-  z-index: 3;
-  touch-action: none;
+.section-dark--liso {
+  background:
+    radial-gradient(ellipse 90% 70% at 22% 0%, rgba(176, 140, 62, .16) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 88% 100%, rgba(125, 52, 52, .16) 0%, transparent 62%),
+    #0e1016;
 }
 
-.lanyard-band {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.lanyard-band-path {
-  stroke: var(--gold);
-  stroke-width: 7;
-  opacity: .92;
-}
-
-.lanyard-card {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 148px;
-  height: 206px;
-  transform-origin: 50% 0;
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  border-radius: 12px;
-  box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .45);
-  padding: 18px 14px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: grab;
-  user-select: none;
-  will-change: transform;
-}
-
-.lanyard.is-dragging .lanyard-card { cursor: grabbing; }
-
-.lanyard-hole {
-  width: 34px;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--line-strong);
-  margin-bottom: 4px;
-}
-
-.lanyard-photo {
-  width: 74px;
-  height: 74px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid var(--gold);
-  flex: 0 0 auto;
-}
-
-.lanyard-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.lanyard-name {
-  font-family: var(--font-display);
-  font-size: .98rem;
-  font-weight: 600;
-  color: var(--ink);
+/* ------------------------------------------------------------
+   ElectricBorder · marco eléctrico de la foto de portada
+   ------------------------------------------------------------ */
+/* El trazo eléctrico sobresale 46px por lado, así que el marco tiene
+   que dejar ese aire dentro del viewport o la página desborda. */
+.foto-portada {
+  margin: 34px auto 0;
+  width: min(300px, calc(100vw - 130px));
   text-align: center;
-  line-height: 1.15;
-  margin-top: 4px;
 }
 
-.lanyard-role {
-  font-size: .56rem;
-  font-weight: 600;
-  letter-spacing: .14em;
+.foto-portada figcaption {
+  margin-top: 26px;
+  font-size: .66rem;
+  font-weight: 500;
+  letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
-  text-align: center;
 }
 
-.lanyard-k { margin-top: auto; }
-.lanyard-k svg { width: 20px; height: 20px; }
+.electric-border {
+  --electric-border-color: #b08c3e;
+  position: relative;
+  border-radius: 14px;
+  isolation: isolate;
+}
 
-/* En PC cuelga en la franja derecha y desaparece al pasar la portada */
+.eb-canvas-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.eb-canvas { display: block; }
+
+.eb-content {
+  position: relative;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 1;
+  background: var(--surface);
+}
+
+.eb-content img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 3.6;
+  object-fit: cover;
+}
+
+.eb-layers {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.eb-glow-1,
+.eb-glow-2,
+.eb-background-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.eb-glow-1 {
+  border: 2px solid color-mix(in srgb, var(--electric-border-color) 58%, transparent);
+  filter: blur(1px);
+}
+
+.eb-glow-2 {
+  border: 2px solid var(--electric-border-color);
+  filter: blur(4px);
+  opacity: .7;
+}
+
+.eb-background-glow {
+  z-index: -1;
+  transform: scale(1.08);
+  filter: blur(28px);
+  opacity: .28;
+  background: linear-gradient(-30deg, var(--electric-border-color), transparent, var(--garnet));
+}
+
+/* En PC la foto ocupa la franja derecha, igual que hacía la credencial */
 @media (min-width: 1200px) {
-  .lanyard {
+  .foto-portada {
     position: fixed;
     right: 22px;
-    top: 76px;
-    width: 300px;
+    top: 50%;
+    width: 268px;
     margin: 0;
+    transform: translateY(-50%);
     opacity: 0;
     pointer-events: none;
     transition: opacity .55s ease;
     z-index: 61;
   }
 
-  body[data-seccion="portada"] .lanyard {
+  body[data-seccion="portada"] .foto-portada {
     opacity: 1;
     pointer-events: auto;
   }
 
-  /* El riel de fotos se reserva para el resto de la página */
   .photo-rail[data-state="portada"] {
     opacity: 0;
     pointer-events: none;
   }
 }
 
-/* En teléfono y tablet no hay riel: la credencial es la imagen de portada */
 @media (max-width: 1199px) {
   .photo-rail { display: none; }
+}
+
+/* ------------------------------------------------------------
+   Mi educación
+   ------------------------------------------------------------ */
+.edu-list { display: grid; gap: 4px; }
+
+.edu {
+  position: relative;
+  padding: 14px 0 14px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.edu:last-child { border-bottom: none; }
+
+/* Hito en la línea de tiempo */
+.edu::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 21px;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--gold);
+  background: var(--bg);
+  transform: rotate(45deg);
+}
+
+.edu--activa::before {
+  background: var(--gold);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 22%, transparent);
+}
+
+.edu-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.edu-title {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.edu-state {
+  flex: 0 0 auto;
+  font-size: .58rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.edu--activa .edu-state {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.edu-place {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: .95rem;
+  color: var(--gold);
+  margin-top: 2px;
+}
+
+.edu-detail {
+  font-size: .84rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ------------------------------------------------------------
+   Marcos destacados · paneles, fichas y portadas
+   Filete dorado que se dibuja y esquinas que aparecen al pasar
+   el cursor. Todo en CSS: no cuesta nada en el hilo principal.
+   ------------------------------------------------------------ */
+.panel,
+.ficha,
+.cover,
+.hobby {
+  position: relative;
+  transition: border-color .35s ease, transform .35s ease, box-shadow .35s ease;
+}
+
+/* Filete superior que se despliega de izquierda a derecha */
+.panel::before,
+.hobby::before,
+.cover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright), transparent);
+  border-radius: 2px 2px 0 0;
+  transition: width .55s cubic-bezier(.2, .8, .2, 1);
+  pointer-events: none;
+}
+
+.panel:hover::before,
+.hobby:hover::before,
+.cover:hover::after { width: 100%; }
+
+/* Esquinas de lámina */
+.panel > .marco-esq,
+.ficha > .marco-esq,
+.cover > .marco-esq,
+.hobby > .marco-esq {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid var(--gold);
+  opacity: 0;
+  transition: opacity .4s ease, transform .45s cubic-bezier(.2, .8, .2, 1);
+  pointer-events: none;
+}
+
+.marco-esq.tl { top: 9px;  left: 9px;  border-right: none; border-bottom: none; transform: translate(5px, 5px); }
+.marco-esq.tr { top: 9px;  right: 9px; border-left: none;  border-bottom: none; transform: translate(-5px, 5px); }
+.marco-esq.bl { bottom: 9px; left: 9px;  border-right: none; border-top: none;  transform: translate(5px, -5px); }
+.marco-esq.br { bottom: 9px; right: 9px; border-left: none;  border-top: none;  transform: translate(-5px, -5px); }
+
+.panel:hover > .marco-esq,
+.ficha:hover > .marco-esq,
+.cover:hover > .marco-esq,
+.hobby:hover > .marco-esq {
+  opacity: .85;
+  transform: none;
+}
+
+.panel:hover,
+.ficha:hover {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
 }
 
 /* ------------------------------------------------------------
@@ -1289,8 +1372,7 @@ body.efectos-listos .work-img {
   }
 
   .text-type__cursor { animation: none; }
-  .target-cursor { display: none; }
-  .target-cursor__spin { animation: none; }
+  .eb-canvas { display: none; }
   .rail-photo { transition: none; }
   .logoloop__track { transform: none !important; }
   .pill-link, .pill-label { transition-duration: .01ms; }

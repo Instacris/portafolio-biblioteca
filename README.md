@@ -7,18 +7,18 @@ portafolio; la primera (cyberpunk / pixel art) queda enlazada como
 «La edición arcade».
 
 ## Temas
-- **Pergamino** (claro) — por defecto si el sistema usa tema claro.
+- **Pergamino** (claro) — siempre por defecto.
 - **Medianoche** (oscuro) — botón sol/luna en la barra superior.
   La preferencia se guarda en `localStorage`.
 
 ## Estructura de la página (una sola página)
 1. **Portada** — nombre, frase que se escribe sola, botones y cinta de tecnologías.
 2. **Capítulo I · Perfil** — presentación con letra capital y ficha de autor.
-3. **Capítulo II · Conocimientos** — lenguajes (medidores), herramientas y Excel.
+3. **Capítulo II · Conocimientos** — educación, herramientas y Excel.
 4. **Capítulo III · Pasatiempos** — fondo oscuro con el ojo de fuego animado.
 5. **Capítulo IV · Experiencia** — línea de tiempo laboral.
 6. **Capítulo V · Proyectos** — catálogo de obras con numeración romana y enlaces en vivo.
-7. **Apéndices** — KAMEX Tech y la edición arcade, sobre lluvia de letras.
+7. **Apéndices** — KAMEX Tech y la edición arcade.
 8. **Epílogo · Contacto** — email y dock de redes.
 
 ## Efectos (JavaScript puro, sin React ni librerías)
@@ -32,13 +32,11 @@ así que están reimplementados a mano respetando su comportamiento y sus props:
 | **ShinyText** (brillo que recorre) | Botones y llamada de las obras | `js/effects.js` + `css/effects.css` |
 | **LogoLoop** (cinta infinita) | Bajo el texto de la portada | `js/effects.js` |
 | **BubbleMenu** (menú de burbujas) | Navegación centrada, PC y teléfono | `js/effects.js` |
-| **TargetCursor** (mira) | Solo la sección Proyectos | `js/effects.js` |
-| **Lanyard** (credencial colgante) | Portada; cuerda con física verlet, se arrastra | `js/effects.js` |
+| **ElectricBorder** (marco eléctrico) | Foto de la portada | `js/effects.js` |
 | **Ferrofluid** (WebGL) | Fondo de la portada | `js/backgrounds.js` |
 | **EvilEye** (ojo de fuego, WebGL) | Fondo de Pasatiempos | `js/backgrounds.js` |
 | **LightPillar** (pilar de luz, WebGL) | Fondo de Experiencia | `js/backgrounds.js` |
 | **MagicBento** (foco, brillo, partículas) | Sobre las obras de Proyectos | `js/effects.js` |
-| **LetterGlitch** (lluvia de letras) | Fondo de Servicios | `js/backgrounds.js` |
 | **Riel de fotos** | Viaja por la derecha al hacer scroll | `js/effects.js` |
 | **Dock de redes** | Epílogo, se abre al pasar el cursor | `js/effects.js` |
 
@@ -56,8 +54,9 @@ toda la sección, brillo de borde según la cercanía, partículas al pasar por
 encima, inclinación 3D con magnetismo y una onda al hacer clic. En pantallas
 táctiles se desactiva solo.
 
-> `sideRays()` y `dotField()` siguen en `js/backgrounds.js` sin usarse, por si
-> se quiere volver a esos fondos.
+Los marcos (paneles, fichas y portadas) llevan un filete dorado que se
+despliega y esquinas de lámina que aparecen al pasar el cursor: todo en CSS,
+sin coste en el hilo principal.
 
 ## Tema
 Arranca siempre en **modo claro**; el oscuro solo se usa si tú lo elegiste antes
@@ -82,7 +81,7 @@ en teléfono y tablet se muestran como collage en la portada.
 ## Cómo editar tu información
 Casi todo el contenido vive en **`js/data.js`**:
 
-- `LENGUAJES` — nombre y nivel (%) de cada lenguaje.
+- `EDUCACION` — estudios (título, institución, detalle, `state`: "en curso" o "listo").
 - `HERRAMIENTAS` — nombre, descripción y etiqueta.
 - `EXCEL_SKILLS` — lista de habilidades de Excel.
 - `EXPERIENCIA` — trabajos (cargo, empresa, fecha, descripción, tags).
@@ -95,8 +94,7 @@ Los textos del perfil, los apéndices (KAMEX / edición arcade) y el epigrama
 se editan directamente en `index.html`.
 
 ### Foto de perfil
-`img/fotoperfil.jpg` — se muestra en el marco de arco de la portada.
-Si no existe, aparece un monograma de respaldo.
+`img/fotoperfil.jpg` — se muestra en la portada dentro del marco eléctrico.
 
 ## Estructura de archivos
 ```
@@ -112,3 +110,17 @@ vercel.json       Headers de seguridad para el deploy
 ## Ver en local
 Sitio estático: abre `index.html` en el navegador, o levanta un servidor
 (`npx serve .`).
+
+## Rendimiento
+Diagnóstico medido en el navegador y corregido:
+
+| Causa | Antes | Ahora |
+|---|---|---|
+| MagicBento leía el rectángulo de las 11 obras en cada `mousemove` | 2 ms por evento (~120 ms por segundo de ratón) | rects cacheados + agrupado en un `requestAnimationFrame`: **0,7 ms** |
+| LetterGlitch repintaba 3.441 caracteres por fotograma | ~3 ms por fotograma (~190 ms/s) | **eliminado** |
+| TargetCursor mantenía un `requestAnimationFrame` siempre activo | — | **eliminado** |
+| `backdrop-filter` en las tarjetas de las secciones oscuras | 10 elementos | 8 (fondo semiopaco en su lugar) |
+| Cinta de logos animando fuera de pantalla | siempre | se pausa cuando no se ve |
+
+Los shaders WebGL sí eran baratos (0,85 ms de los 16,7 ms disponibles por
+fotograma): el cuello de botella estaba en el hilo principal, no en la GPU.

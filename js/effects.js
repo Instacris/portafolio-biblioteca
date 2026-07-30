@@ -41,6 +41,8 @@
     libro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3.4 4.4h5.2c1.9 0 3.4 1.5 3.4 3.4v12c0-1.6-1.3-2.9-2.9-2.9H3.4V4.4Z"/><path d="M20.6 4.4h-5.2c-1.9 0-3.4 1.5-3.4 3.4v12c0-1.6 1.3-2.9 2.9-2.9h5.7V4.4Z"/></svg>',
     mando: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7.4 7.5h9.2a4.4 4.4 0 0 1 4.3 3.5l.9 4.4a2.5 2.5 0 0 1-4.4 2.1l-1.6-2H8.2l-1.6 2a2.5 2.5 0 0 1-4.4-2.1l.9-4.4a4.4 4.4 0 0 1 4.3-3.5Z"/><path d="M7.2 11.4v2.6M5.9 12.7h2.6"/><circle cx="16" cy="12" r=".9" fill="currentColor" stroke="none"/><circle cx="18.2" cy="14.1" r=".9" fill="currentColor" stroke="none"/></svg>',
     familia: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.4" cy="6.6" r="2.8"/><circle cx="17" cy="8.8" r="2.1"/><path d="M2.8 20.2v-1.9a5.6 5.6 0 0 1 5.6-5.6 5.6 5.6 0 0 1 5.6 5.6v1.9"/><path d="M16.2 14.1a4.2 4.2 0 0 1 5 4.1v2"/></svg>',
+    pantalla: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="4.4" width="18.8" height="12.6" rx="2"/><path d="M8.4 21h7.2M12 17v4"/><path d="m10.4 8.6 4.2 2.3-4.2 2.3V8.6Z"/></svg>',
+    engranaje: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M12 2.6v2.6M12 18.8v2.6M4.4 12H1.8M22.2 12h-2.6M6.6 6.6 4.8 4.8M19.2 19.2l-1.8-1.8M17.4 6.6l1.8-1.8M4.8 19.2l1.8-1.8"/></svg>',
 
     whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.67c2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.17 8.17 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24Zm-3.9 4.35c-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.02 2.29.9 2.76.72 3.26.68.5-.05 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.53-.32-.28-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.6.07-.28-.14-1.15-.42-2.2-1.35-.81-.72-1.36-1.62-1.52-1.9-.16-.27-.02-.42.12-.56.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.51-.86-2.06-.22-.53-.45-.46-.61-.47l-.53-.01Z"/></svg>',
     github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.18-1.49 3.14-1.18 3.14-1.18.63 1.59.24 2.76.12 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.66.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .3.2.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>',
@@ -200,7 +202,16 @@
     track.addEventListener("mouseenter", function () { hover = true; });
     track.addEventListener("mouseleave", function () { hover = false; });
 
+    /* Se detiene cuando la cinta no está a la vista (rendimiento) */
+    var visible = true;
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { visible = e.isIntersecting; });
+      }, { threshold: 0 }).observe(root);
+    }
+
     function animar(t) {
+      if (!visible) { ultimo = null; requestAnimationFrame(animar); return; }
       if (ultimo === null) ultimo = t;
       var dt = Math.max(0, t - ultimo) / 1000;
       ultimo = t;
@@ -267,108 +278,6 @@
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && abierto) cerrar();
     });
-  }
-
-  /* ==========================================================
-     5 · TargetCursor — mira que se ancla (solo en Proyectos)
-     ========================================================== */
-  function targetCursor(opts) {
-    if (isTouch || reduceMotion) return;
-
-    var o = opts || {};
-    var zona = $(o.zona || "#proyectos");
-    if (!zona) return;
-
-    var selector = o.targetSelector || ".cursor-target";
-    var borderWidth = 2.5;
-    var cornerSize = 12;
-
-    var wrap = document.createElement("div");
-    wrap.className = "target-cursor";
-    wrap.style.setProperty("--spin-duration", (o.spinDuration || 2) + "s");
-    wrap.innerHTML =
-      '<div class="target-cursor__spin">' +
-        '<div class="target-cursor__dot"></div>' +
-        '<div class="target-cursor__corner corner-tl"></div>' +
-        '<div class="target-cursor__corner corner-tr"></div>' +
-        '<div class="target-cursor__corner corner-br"></div>' +
-        '<div class="target-cursor__corner corner-bl"></div>' +
-      '</div>';
-    document.body.appendChild(wrap);
-
-    var corners = $$(".target-cursor__corner", wrap);
-    var mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    var pos = { x: mouse.x, y: mouse.y };
-    var activo = false;
-    var target = null;
-    var rect = null;
-
-    function activar(on) {
-      if (on === activo) return;
-      activo = on;
-      wrap.classList.toggle("is-active", on);
-      document.body.classList.toggle("cursor-hidden", on);
-      if (!on) soltar();
-    }
-
-    function agarrar(el) {
-      if (target === el) return;
-      target = el;
-      rect = el.getBoundingClientRect();
-      wrap.classList.add("is-targeting");
-      el.addEventListener("mouseleave", soltar, { once: true });
-    }
-
-    function soltar() {
-      if (!target) return;
-      target = null;
-      rect = null;
-      wrap.classList.remove("is-targeting");
-      corners.forEach(function (c) { c.style.transform = ""; });
-    }
-
-    document.addEventListener("mousemove", function (e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-
-      var dentro = !!(e.target.closest && e.target.closest("#proyectos"));
-      activar(dentro);
-
-      if (!dentro) return;
-
-      var t = e.target.closest(selector);
-      if (t) agarrar(t); else soltar();
-    }, { passive: true });
-
-    document.addEventListener("mousedown", function () { wrap.classList.add("is-down"); });
-    document.addEventListener("mouseup", function () { wrap.classList.remove("is-down"); });
-
-    /* Si se hace scroll con la mira puesta, revalida el objetivo */
-    window.addEventListener("scroll", function () {
-      if (target) rect = target.getBoundingClientRect();
-    }, { passive: true });
-
-    function frame() {
-      pos.x += (mouse.x - pos.x) * 0.22;
-      pos.y += (mouse.y - pos.y) * 0.22;
-      wrap.style.transform = "translate(" + pos.x + "px, " + pos.y + "px)";
-
-      if (target && rect) {
-        var p = [
-          { x: rect.left - borderWidth, y: rect.top - borderWidth },
-          { x: rect.right + borderWidth - cornerSize, y: rect.top - borderWidth },
-          { x: rect.right + borderWidth - cornerSize, y: rect.bottom + borderWidth - cornerSize },
-          { x: rect.left - borderWidth, y: rect.bottom + borderWidth - cornerSize }
-        ];
-        corners.forEach(function (c, i) {
-          c.style.transform = "translate(" + (p[i].x - pos.x) + "px, " + (p[i].y - pos.y) + "px)";
-        });
-      }
-
-      requestAnimationFrame(frame);
-    }
-
-    requestAnimationFrame(frame);
   }
 
   /* ==========================================================
@@ -545,6 +454,19 @@
     $$("[data-k]").forEach(function (el) { el.innerHTML = K_SVG; });
   }
 
+  /* Esquinas de lámina en los marcos (paneles, fichas y portadas) */
+  function esquinasDeMarco() {
+    $$(".panel, .ficha, .cover, .hobby").forEach(function (m) {
+      if ($(".marco-esq", m)) return;
+      ["tl", "tr", "bl", "br"].forEach(function (pos) {
+        var s = document.createElement("span");
+        s.className = "marco-esq " + pos;
+        s.setAttribute("aria-hidden", "true");
+        m.appendChild(s);
+      });
+    });
+  }
+
   /* ==========================================================
      10 · SplitText — el nombre entra letra por letra
      ========================================================== */
@@ -587,226 +509,171 @@
   }
 
   /* ==========================================================
-     11 · Lanyard — credencial que cuelga y se balancea
-     Cuerda con física verlet; reacciona al scroll y se arrastra.
+     11 · ElectricBorder — marco eléctrico para la foto de portada
+     El trazo se dibuja en canvas 2D desplazando un rectángulo
+     redondeado con ruido. Ajustado para que sea ligero:
+     5 octavas (en vez de 10) y una muestra cada 4 px.
      ========================================================== */
-  function lanyard() {
-    var root = $("#lanyard");
+  function electricBorder(root, opts) {
     if (!root) return;
 
-    var N = 8;                 /* puntos de la cuerda */
-    var CARD_W = 148;
-    var CARD_H = 206;
+    var o = opts || {};
+    var color = o.color || "#b08c3e";
+    var speed = o.speed != null ? o.speed : 1;
+    var chaos = o.chaos != null ? o.chaos : 0.1;
+    var radio = o.borderRadius != null ? o.borderRadius : 16;
+    var margen = 46;             /* aire para que el trazo salga del marco */
 
-    /* El SVG tiene que usar EXACTAMENTE los píxeles del contenedor:
-       si el viewBox no coincide, la banda se estira y la cuerda deja
-       de caer sobre la tarjeta. */
-    var ANCHO = root.clientWidth || 240;
-    var ALTO = root.clientHeight || 470;
-    var SEG = 17;              /* largo de cada tramo (se recalcula) */
-
+    var contenido = root.innerHTML;
+    root.classList.add("electric-border");
+    root.style.setProperty("--electric-border-color", color);
     root.innerHTML =
-      '<svg class="lanyard-band" viewBox="0 0 ' + ANCHO + " " + ALTO + '" preserveAspectRatio="none" aria-hidden="true">' +
-        '<path class="lanyard-band-path" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
-      "</svg>" +
-      '<div class="lanyard-card" id="lanyard-card">' +
-        '<span class="lanyard-hole"></span>' +
-        '<div class="lanyard-photo">' +
-          '<img src="img/fotoperfil.jpg" alt="Cristóbal Chacón" draggable="false" />' +
-        "</div>" +
-        '<p class="lanyard-name">Cristóbal Chacón</p>' +
-        '<p class="lanyard-role">Desarrollador web</p>' +
-        '<span class="lanyard-k" data-k></span>' +
-      "</div>";
+      '<div class="eb-canvas-container"><canvas class="eb-canvas"></canvas></div>' +
+      '<div class="eb-layers"><div class="eb-glow-1"></div><div class="eb-glow-2"></div>' +
+      '<div class="eb-background-glow"></div></div>' +
+      '<div class="eb-content">' + contenido + "</div>";
 
-    var path = $(".lanyard-band-path", root);
-    var card = $("#lanyard-card", root);
-    $$("[data-k]", root).forEach(function (el) { el.innerHTML = K_SVG; });
+    var canvas = $(".eb-canvas", root);
+    var ctx = canvas.getContext("2d");
+    var contenedor = $(".eb-content", root);
 
-    var anchorX = ANCHO / 2;
-    var anchorY = 6;
+    /* --- Ruido (mismas fórmulas que el componente original) --- */
+    function random(x) { return (Math.sin(x * 12.9898) * 43758.5453) % 1; }
 
-    /* Recalcula el sistema de coordenadas cuando cambia el tamaño.
-       La cuerda se reparte el alto libre que queda sobre la tarjeta. */
-    var medido = false;
-
-    function medir() {
-      var w = root.clientWidth || ANCHO;
-      var h = root.clientHeight || ALTO;
-      if (medido && w === ANCHO && h === ALTO) return;
-      medido = true;
-
-      ANCHO = w;
-      ALTO = h;
-      anchorX = ANCHO / 2;
-      SEG = Math.max(12, (ALTO - CARD_H - anchorY - 18) / (N - 1));
-      $(".lanyard-band", root).setAttribute("viewBox", "0 0 " + ANCHO + " " + ALTO);
+    function noise2D(x, y) {
+      var i = Math.floor(x), j = Math.floor(y);
+      var fx = x - i, fy = y - j;
+      var a = random(i + j * 57);
+      var b = random(i + 1 + j * 57);
+      var c = random(i + (j + 1) * 57);
+      var d = random(i + 1 + (j + 1) * 57);
+      var ux = fx * fx * (3 - 2 * fx);
+      var uy = fy * fy * (3 - 2 * fy);
+      return a * (1 - ux) * (1 - uy) + b * ux * (1 - uy) + c * (1 - ux) * uy + d * ux * uy;
     }
 
-    medir();
+    var OCTAVAS = 5, LACUNARITY = 1.6, GAIN = 0.7, FREQ = 10, DESPLAZ = 46;
 
-    var pts = [];
-    for (var i = 0; i < N; i++) {
-      pts.push({ x: anchorX, y: anchorY + i * SEG, ox: anchorX, oy: anchorY + i * SEG });
+    function ruidoOctavado(x, t, seed) {
+      var y = 0, amp = chaos, freq = FREQ;
+      for (var i = 0; i < OCTAVAS; i++) {
+        if (i > 0) y += amp * noise2D(freq * x + seed * 100, t * freq * 0.3);
+        freq *= LACUNARITY;
+        amp *= GAIN;
+      }
+      return y;
+    }
+
+    /* --- Punto sobre un rectángulo redondeado, según el recorrido --- */
+    function esquina(cx, cy, r, ang0, arco, p) {
+      var a = ang0 + p * arco;
+      return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+    }
+
+    function puntoDelBorde(t, left, top, w, h, r) {
+      var rectoW = w - 2 * r, rectoH = h - 2 * r;
+      var arco = (Math.PI * r) / 2;
+      var total = 2 * rectoW + 2 * rectoH + 4 * arco;
+      var d = t * total, acc = 0;
+
+      if (d <= acc + rectoW) return { x: left + r + ((d - acc) / rectoW) * rectoW, y: top };
+      acc += rectoW;
+      if (d <= acc + arco) return esquina(left + w - r, top + r, r, -Math.PI / 2, Math.PI / 2, (d - acc) / arco);
+      acc += arco;
+      if (d <= acc + rectoH) return { x: left + w, y: top + r + ((d - acc) / rectoH) * rectoH };
+      acc += rectoH;
+      if (d <= acc + arco) return esquina(left + w - r, top + h - r, r, 0, Math.PI / 2, (d - acc) / arco);
+      acc += arco;
+      if (d <= acc + rectoW) return { x: left + w - r - ((d - acc) / rectoW) * rectoW, y: top + h };
+      acc += rectoW;
+      if (d <= acc + arco) return esquina(left + r, top + h - r, r, Math.PI / 2, Math.PI / 2, (d - acc) / arco);
+      acc += arco;
+      if (d <= acc + rectoH) return { x: left, y: top + h - r - ((d - acc) / rectoH) * rectoH };
+      acc += rectoH;
+      return esquina(left + r, top + r, r, Math.PI, Math.PI / 2, (d - acc) / arco);
+    }
+
+    var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function medir() {
+      var r = contenedor.getBoundingClientRect();
+      if (!r.width || !r.height) return false;
+      W = r.width + margen * 2;
+      H = r.height + margen * 2;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
+      return true;
+    }
+
+    var tiempo = 0;
+
+    function dibujar() {
+      if (!W || !H) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = o.thickness != null ? o.thickness : 1.4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      var bw = W - 2 * margen, bh = H - 2 * margen;
+      var r = Math.min(radio, Math.min(bw, bh) / 2);
+      var perimetro = 2 * (bw + bh) + 2 * Math.PI * r;
+      var muestras = Math.max(60, Math.floor(perimetro / 4));
+
+      ctx.beginPath();
+      for (var i = 0; i <= muestras; i++) {
+        var p = i / muestras;
+        var pt = puntoDelBorde(p, margen, margen, bw, bh, r);
+        var nx = ruidoOctavado(p * 8, tiempo, 0);
+        var ny = ruidoOctavado(p * 8, tiempo, 1);
+        var x = pt.x + nx * DESPLAZ;
+        var y = pt.y + ny * DESPLAZ;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    if (!medir()) {
+      /* La imagen aún no tiene tamaño: se reintenta al cargar */
+      var img = $("img", contenedor);
+      if (img) img.addEventListener("load", function () { if (medir()) dibujar(); }, { once: true });
     }
 
     window.addEventListener("resize", function () {
-      var antes = anchorX;
-      medir();
-      /* Traslada la cuerda al nuevo centro para que no dé un salto */
-      var dx = anchorX - antes;
-      for (var i = 0; i < N; i++) { pts[i].x += dx; pts[i].ox += dx; }
+      clearTimeout(dibujar._t);
+      dibujar._t = setTimeout(function () { if (medir()) dibujar(); }, 150);
     });
 
-    var arrastrando = false;
-    var dragX = 0, dragY = 0;
-    var impulso = 0;
+    dibujar();
 
-    function fisica() {
-      var gravedad = 0.85;
-      var roce = 0.985;
+    if (reduceMotion) return;
 
-      for (var i = 1; i < N; i++) {
-        var p = pts[i];
-        var vx = (p.x - p.ox) * roce;
-        var vy = (p.y - p.oy) * roce;
-        p.ox = p.x;
-        p.oy = p.y;
-        p.x += vx;
-        p.y += vy + gravedad;
-      }
+    /* 30 fps es de sobra para un trazo eléctrico y ahorra la mitad */
+    var raf = null, ultimo = 0, intervalo = 1000 / 30;
 
-      /* Resolución de restricciones: mantiene los tramos a su largo */
-      for (var k = 0; k < 14; k++) {
-        pts[0].x = anchorX;
-        pts[0].y = anchorY;
-
-        for (var j = 0; j < N - 1; j++) {
-          var a = pts[j], b = pts[j + 1];
-          var dx = b.x - a.x, dy = b.y - a.y;
-          var d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
-          var ajuste = ((d - SEG) / d) * 0.5;
-          var ox = dx * ajuste, oy = dy * ajuste;
-          if (j > 0) { a.x += ox; a.y += oy; }
-          b.x -= ox; b.y -= oy;
-        }
-
-        if (arrastrando) {
-          pts[N - 1].x = dragX;
-          pts[N - 1].y = dragY;
-        }
-
-        /* La tarjeta cuelga del último punto: se limita el balanceo
-           para que no se salga por los lados del contenedor. */
-        var margen = CARD_W / 2 + 6;
-        for (var m = 1; m < N; m++) {
-          var lim = (m === N - 1) ? margen : 20;
-          if (pts[m].x < lim) pts[m].x = lim;
-          if (pts[m].x > ANCHO - lim) pts[m].x = ANCHO - lim;
-        }
-      }
-    }
-
-    function pintar() {
-      var d = "M" + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
-      for (var i = 1; i < N; i++) {
-        d += " L" + pts[i].x.toFixed(1) + " " + pts[i].y.toFixed(1);
-      }
-      path.setAttribute("d", d);
-
-      var fin = pts[N - 1];
-      var prev = pts[N - 2];
-      var ang = Math.atan2(fin.x - prev.x, fin.y - prev.y) * (180 / Math.PI);
-
-      card.style.transform =
-        "translate(" + (fin.x - CARD_W / 2).toFixed(1) + "px," + fin.y.toFixed(1) + "px)" +
-        " rotate(" + (-ang).toFixed(2) + "deg)";
-    }
-
-    /* --- Arrastre con el ratón / el dedo --- */
-    function puntoLocal(e) {
-      var r = root.getBoundingClientRect();
-      var escalaX = ANCHO / r.width;
-      var escalaY = ALTO / r.height;
-      return {
-        x: (e.clientX - r.left) * escalaX,
-        y: (e.clientY - r.top) * escalaY
-      };
-    }
-
-    card.addEventListener("pointerdown", function (e) {
-      arrastrando = true;
-      var p = puntoLocal(e);
-      dragX = p.x; dragY = p.y;
-      card.setPointerCapture(e.pointerId);
-      root.classList.add("is-dragging");
-    });
-
-    card.addEventListener("pointermove", function (e) {
-      if (!arrastrando) return;
-      var p = puntoLocal(e);
-      dragX = p.x; dragY = p.y;
-    });
-
-    function soltar(e) {
-      if (!arrastrando) return;
-      arrastrando = false;
-      root.classList.remove("is-dragging");
-      try { card.releasePointerCapture(e.pointerId); } catch (err) {}
-    }
-
-    card.addEventListener("pointerup", soltar);
-    card.addEventListener("pointercancel", soltar);
-
-    /* --- La credencial se mece al desplazar la página --- */
-    var ultimoScroll = window.scrollY;
-    window.addEventListener("scroll", function () {
-      var delta = window.scrollY - ultimoScroll;
-      ultimoScroll = window.scrollY;
-      impulso += delta;
-    }, { passive: true });
-
-    if (reduceMotion) {
-      for (var s = 0; s < 240; s++) fisica();
-      pintar();
-      return;
-    }
-
-    var raf = null;
-
-    function bucle() {
-      if (Math.abs(impulso) > 0.01) {
-        /* La inercia empuja la cuerda en sentido contrario al scroll */
-        var golpe = Math.max(-14, Math.min(14, impulso * 0.35));
-        for (var i = 1; i < N; i++) {
-          pts[i].oy += golpe * (i / N);
-          pts[i].ox += golpe * 0.16 * (i / N);
-        }
-        impulso = 0;
-      }
-
-      fisica();
-      pintar();
+    function bucle(t) {
       raf = requestAnimationFrame(bucle);
+      if (t - ultimo < intervalo) return;
+      tiempo += ((t - ultimo) / 1000) * speed;
+      ultimo = t;
+      dibujar();
     }
 
     if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
           if (e.isIntersecting) {
-            if (raf === null) raf = requestAnimationFrame(bucle);
-          } else if (raf !== null) {
-            cancelAnimationFrame(raf); raf = null;
-          }
+            if (raf === null) { ultimo = performance.now(); raf = requestAnimationFrame(bucle); }
+          } else if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
         });
       }, { threshold: 0.01 }).observe(root);
     } else {
       raf = requestAnimationFrame(bucle);
     }
-
-    /* Primer dibujo aunque el bucle aún no arranque */
-    for (var s2 = 0; s2 < 60; s2++) fisica();
-    pintar();
   }
 
   /* ==========================================================
@@ -916,42 +783,89 @@
     var proximidad = radio * 0.5;
     var desvanecido = radio * 0.75;
 
-    document.addEventListener("mousemove", function (e) {
-      var r = seccion.getBoundingClientRect();
-      var dentro = e.clientX >= r.left && e.clientX <= r.right &&
-                   e.clientY >= r.top && e.clientY <= r.bottom;
+    /* --- Rendimiento ---
+       Antes se leía getBoundingClientRect() de cada tarjeta en CADA
+       mousemove: 11 lecturas + 33 escrituras de estilo por evento
+       (medido: 2 ms por evento, ~200 ms por segundo de ratón).
+       Ahora los rectángulos se cachean y solo se recalculan al hacer
+       scroll o redimensionar, y el trabajo se agrupa en un
+       requestAnimationFrame. */
+    var rects = [];
+    var rectSeccion = null;
+    var rectsSucios = true;
+
+    function medirRects() {
+      rectSeccion = seccion.getBoundingClientRect();
+      rects = tarjetas.map(function (t) {
+        var r = t.getBoundingClientRect();
+        return { left: r.left, top: r.top, w: r.width, h: r.height,
+                 cx: r.left + r.width / 2, cy: r.top + r.height / 2,
+                 mitad: Math.max(r.width, r.height) / 2 };
+      });
+      rectsSucios = false;
+    }
+
+    function invalidar() { rectsSucios = true; }
+    window.addEventListener("scroll", invalidar, { passive: true });
+    window.addEventListener("resize", invalidar);
+
+    var mx = 0, my = 0, pendiente = false, ultimaIntensidad = [];
+
+    function pintar() {
+      pendiente = false;
+      if (rectsSucios) medirRects();
+      if (!rectSeccion) return;
+
+      var dentro = mx >= rectSeccion.left && mx <= rectSeccion.right &&
+                   my >= rectSeccion.top && my <= rectSeccion.bottom;
 
       if (!dentro) {
         foco.style.opacity = "0";
-        tarjetas.forEach(function (t) { t.style.setProperty("--glow-intensity", "0"); });
+        tarjetas.forEach(function (t, i) {
+          if (ultimaIntensidad[i] !== 0) {
+            t.style.setProperty("--glow-intensity", "0");
+            ultimaIntensidad[i] = 0;
+          }
+        });
         return;
       }
 
       var minDist = Infinity;
 
-      tarjetas.forEach(function (t) {
-        var cr = t.getBoundingClientRect();
-        var cx = cr.left + cr.width / 2;
-        var cy = cr.top + cr.height / 2;
-        var d = Math.max(0, Math.hypot(e.clientX - cx, e.clientY - cy) - Math.max(cr.width, cr.height) / 2);
-        minDist = Math.min(minDist, d);
+      for (var i = 0; i < tarjetas.length; i++) {
+        var r = rects[i];
+        if (!r) continue;
+        var d = Math.max(0, Math.hypot(mx - r.cx, my - r.cy) - r.mitad);
+        if (d < minDist) minDist = d;
 
         var intensidad = 0;
         if (d <= proximidad) intensidad = 1;
         else if (d <= desvanecido) intensidad = (desvanecido - d) / (desvanecido - proximidad);
 
-        t.style.setProperty("--glow-x", (((e.clientX - cr.left) / cr.width) * 100) + "%");
-        t.style.setProperty("--glow-y", (((e.clientY - cr.top) / cr.height) * 100) + "%");
-        t.style.setProperty("--glow-intensity", String(intensidad));
-      });
+        /* Solo se escribe si la tarjeta está realmente iluminada */
+        if (intensidad === 0 && ultimaIntensidad[i] === 0) continue;
 
-      foco.style.left = e.clientX + "px";
-      foco.style.top = e.clientY + "px";
-      foco.style.opacity = String(
+        var t = tarjetas[i];
+        t.style.setProperty("--glow-x", (((mx - r.left) / r.w) * 100).toFixed(1) + "%");
+        t.style.setProperty("--glow-y", (((my - r.top) / r.h) * 100).toFixed(1) + "%");
+        t.style.setProperty("--glow-intensity", intensidad.toFixed(3));
+        ultimaIntensidad[i] = intensidad;
+      }
+
+      foco.style.transform = "translate(" + mx + "px," + my + "px) translate(-50%, -50%)";
+      foco.style.opacity = (
         minDist <= proximidad ? 0.8
           : minDist <= desvanecido ? ((desvanecido - minDist) / (desvanecido - proximidad)) * 0.8
           : 0
-      );
+      ).toFixed(2);
+    }
+
+    document.addEventListener("mousemove", function (e) {
+      mx = e.clientX;
+      my = e.clientY;
+      if (pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(pintar);
     }, { passive: true });
 
     /* --- Partículas, inclinación, magnetismo y onda por tarjeta --- */
@@ -1062,12 +976,18 @@
     logoLoop($("#logo-loop"), window.STACK, { speed: 46, hoverSpeed: 0 });
 
     pasatiempos();
+    esquinasDeMarco();
     photoRail();
-    lanyard();
+    electricBorder($("#foto-marco"), {
+      color: "#b08c3e",
+      speed: 1,
+      chaos: 0.1,
+      borderRadius: 14,
+      thickness: 1.4
+    });
     obraModal();
     dock();
     bubbleMenu();
-    targetCursor({ zona: "#proyectos", targetSelector: ".cursor-target", spinDuration: 2 });
     magicBento({ seccion: "#proyectos", glowColor: "176, 140, 62", spotlightRadius: 320, particleCount: 10 });
 
     /* Brillo en los botones de la portada y de los apéndices */

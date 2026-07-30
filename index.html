@@ -90,8 +90,13 @@
         </div>
       </div>
 
-      <!-- Credencial colgante: cuelga a la derecha y se balancea con la página -->
-      <div class="lanyard" id="lanyard" aria-hidden="true"></div>
+      <!-- Foto de portada con marco eléctrico -->
+      <figure class="foto-portada">
+        <div class="foto-marco" id="foto-marco">
+          <img src="img/fotoperfil.jpg" alt="Retrato de Cristóbal Chacón" />
+        </div>
+        <figcaption>Lám. I: El autor, Chile</figcaption>
+      </figure>
 
       <!-- Riel de fotos: toma el relevo desde Perfil en adelante -->
       <div class="photo-rail" id="photo-rail" data-state="portada" aria-hidden="true"></div>
@@ -151,8 +156,8 @@
 
         <div class="skills-grid">
           <article class="panel reveal">
-            <h3 class="panel-title">Lenguajes de programación</h3>
-            <div id="lang-list" class="lang-list"></div>
+            <h3 class="panel-title">Mi educación</h3>
+            <div id="edu-list" class="edu-list"></div>
           </article>
 
           <article class="panel reveal">
@@ -221,10 +226,7 @@
     </section>
 
     <!-- ====== Apéndices · Servicios (fondo: lluvia de letras) ====== -->
-    <section id="servicios" class="chapter-section section-dark">
-      <div class="section-bg" id="glitch-bg" aria-hidden="true"></div>
-      <div class="section-veil" aria-hidden="true"></div>
-
+    <section id="servicios" class="chapter-section section-dark section-dark--liso">
       <div class="wrap">
         <div class="fleuron" aria-hidden="true"></div>
         <header class="chapter reveal">

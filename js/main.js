@@ -52,19 +52,23 @@
     return out;
   }
 
-  /* ---------- Render: lenguajes ---------- */
-  var langList = $("#lang-list");
-  window.LENGUAJES.forEach(function (l) {
-    var div = document.createElement("div");
-    div.className = "lang";
-    div.innerHTML =
-      '<div class="lang-head">' +
-        '<span class="lang-name">' + esc(l.name) + "</span>" +
-        '<span class="lang-level">' + l.level + "%</span>" +
-      "</div>" +
-      '<div class="meter"><i style="--w:' + l.level + '%"></i></div>';
-    langList.appendChild(div);
-  });
+  /* ---------- Render: mi educación ---------- */
+  var eduList = $("#edu-list");
+  if (eduList) {
+    window.EDUCACION.forEach(function (e) {
+      var enCurso = e.state === "en curso";
+      var art = document.createElement("article");
+      art.className = "edu" + (enCurso ? " edu--activa" : "");
+      art.innerHTML =
+        '<div class="edu-head">' +
+          '<h4 class="edu-title">' + esc(e.title) + "</h4>" +
+          '<span class="edu-state">' + esc(e.state) + "</span>" +
+        "</div>" +
+        '<p class="edu-place">' + esc(e.place) + "</p>" +
+        '<p class="edu-detail">' + esc(e.detail) + "</p>";
+      eduList.appendChild(art);
+    });
+  }
 
   /* ---------- Render: herramientas ---------- */
   var toolsList = $("#tools-list");
@@ -107,8 +111,7 @@
   var worksGrid = $("#works-grid");
   window.PROYECTOS.forEach(function (p, i) {
     var b = document.createElement("button");
-    /* cursor-target: la mira del cursor se ancla a esta obra */
-    b.className = "work reveal cursor-target";
+    b.className = "work reveal";
     b.type = "button";
     b.setAttribute("data-obra", String(i));
     b.setAttribute("aria-label", "Ver la ficha de " + p.name);
